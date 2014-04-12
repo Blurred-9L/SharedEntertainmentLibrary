@@ -8,8 +8,8 @@ OwnedItem::OwnedItem() :
 }
 
 OwnedItem::OwnedItem(const string & title, const string & genre,
-                     const string & publisher, unsigned year, int itemType,
-                     int itemPolicy, Member * owner) :
+                     const string & publisher, unsigned year,
+                     unsigned itemType, unsigned itemPolicy, Member * owner) :
     EntertainmentItem(title, genre, publisher, year), itemType(itemType),
     itemPolicy(itemPolicy), owner(owner)
 {
@@ -22,12 +22,12 @@ OwnedItem::~OwnedItem()
     }
 }
 
-int OwnedItem::getItemType() const
+unsigned OwnedItem::getItemType() const
 {
     return itemType;
 }
 
-int OwnedItem::getItemPolicy() const
+unsigned OwnedItem::getItemPolicy() const
 {
     return itemPolicy;
 }
@@ -42,12 +42,12 @@ Member & OwnedItem::getOwner()
     return *owner;
 }
 
-void OwnedItem::setItemType(int itemType)
+void OwnedItem::setItemType(unsigned itemType)
 {
     this->itemType = itemType;
 }
 
-void OwnedItem::setItemPolicy(int itemPolicy)
+void OwnedItem::setItemPolicy(unsigned itemPolicy)
 {
     this->itemPolicy = itemPolicy;
 }

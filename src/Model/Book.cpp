@@ -32,6 +32,11 @@ vector<string> & Book::getAuthors()
     return authors;
 }
 
+unsigned Book::getNPages() const
+{
+    return nPages;
+}
+
 void Book::setIsbn(const string & isbn)
 {
     this->isbn = isbn;
@@ -42,9 +47,7 @@ void Book::setAuthors(const vector<string> & authors)
     this->authors = authors;
 }
 
-void Book::setNPages(int nPages)
+void Book::setNPages(unsigned nPages)
 {
-    if (nPages >= 0) {
-        this->nPages = nPages;
-    }
+    this->nPages = nPages;
 }

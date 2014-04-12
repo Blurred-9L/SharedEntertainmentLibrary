@@ -16,7 +16,7 @@ private:
     ///
     vector<string> authors;
     ///
-    int nPages;
+    unsigned nPages;
     
 public:
     ///
@@ -33,11 +33,13 @@ public:
     ///
     vector<string> & getAuthors();
     ///
+    unsigned getNPages() const;
+    ///
     void setIsbn(const string & isbn);
     ///
     void setAuthors(const vector<string> & authors);
     ///
-    void setNPages(int nPages);
+    void setNPages(unsigned nPages);
 };
 
 #endif /// Not BOOK_H
