@@ -40,7 +40,7 @@ DBConnection::DBConnection()
         db.setUserName(connectionData[_DB_USER_IDX].c_str());
         db.setPassword(connectionData[_DB_PSWD_IDX].c_str());
         dbOpen = db.open();
-        delete connectionData;
+        delete [] connectionData;
         if (!dbOpen) {
             /// Handle error 1: Could not open database.
         }
