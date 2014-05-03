@@ -40,6 +40,8 @@ private:
     
     ///
     void replaceLabelText(const QString & text, int index);
+    ///
+    unsigned long long findId(QListWidgetItem * item);
 
 public:
     ///
@@ -59,7 +61,7 @@ private slots:
     ///
     void updatePageIndexPrevious();
     ///
-    void findAndEmitId(QListWidgetItem * item);
+    void emitIdGetData(QListWidgetItem * item);
     
 signals:
     ///

@@ -42,6 +42,15 @@ string Error::getErrorString(unsigned errorNo)
     case ERROR_UNKNOWN_ITEM_TYPE:
         errorString = "Error Code 4: Could not determine item type.";
         break;
+    case ERROR_ITEM_ID_NOT_FOUND:
+        errorString = "Error Code 5: Could not find requested item id.";
+        break;
+    case ERROR_ITEM_SELECTION_ERROR:
+        errorString = "Error Code 6: More than one item selected.";
+        break;
+    case ERROR_NO_ITEM_SELECTED:
+        errorString = "Error Code 7: No item selected.";
+        break;
     default:
         break;
     }

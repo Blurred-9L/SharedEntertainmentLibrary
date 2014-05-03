@@ -63,8 +63,8 @@ SELMainLibraryWidget::SELMainLibraryWidget(QWidget * parent) :
     connect(previousPageButton, SIGNAL(clicked()),
             this, SLOT(updatePageIndexPrevious()));
     /// Item on list selected -> updateInfoLabels
-    connect(libraryListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
-            this, SLOT(findAndEmitId(QListWidgetItem *)));
+    connect(libraryListWidget, SIGNAL(itemClicked(QListWidgetItem *)),
+            this, SLOT(emitIdGetData(QListWidgetItem *)));
 }
 
 SELMainLibraryWidget::~SELMainLibraryWidget()
@@ -216,12 +216,24 @@ void SELMainLibraryWidget::updatePageIndexPrevious()
     }
 }
 
-void SELMainLibraryWidget::findAndEmitId(QListWidgetItem * item)
+void SELMainLibraryWidget::emitIdGetData(QListWidgetItem * item)
+{
+    unsigned long long id = findId(item);
+    
+    if (id > 0) {
+        emit getItemData(id);
+    } else {
+        Error::raiseError(Error::ERROR_ITEM_ID_NOT_FOUND);
+    }
+}
+
+unsigned long long SELMainLibraryWidget::findId(QListWidgetItem * item)
 {
     QList<QListWidgetItem *> items = libraryListWidget->findItems("*", Qt::MatchWildcard);
     QList<QListWidgetItem *>::iterator i;
     bool found = false;
     unsigned index = 0;
+    unsigned long long id;
     
     for (i = items.begin(); i != items.end() && !found; i++) {
         if ((*i) == item) {
@@ -232,8 +244,12 @@ void SELMainLibraryWidget::findAndEmitId(QListWidgetItem * item)
     }
     
     if (found) {
-        emit getItemData(itemIds[index]);
+        id = itemIds[index];
+    } else {
+        id = 0;
     }
+    
+    return id;
 }
 
 void SELMainLibraryWidget::replaceLabelText(const QString & text, int index)
