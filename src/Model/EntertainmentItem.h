@@ -10,7 +10,7 @@ using std::string;
 class EntertainmentItem {
 private:
     ///
-    unsigned id;
+    unsigned long long id;
     ///
     string title;
     ///
@@ -29,7 +29,7 @@ public:
     ///
     virtual ~EntertainmentItem();
     ///
-    unsigned getId() const;
+    unsigned long long getId() const;
     ///
     const string & getTitle() const;
     ///
@@ -39,7 +39,7 @@ public:
     ///
     unsigned getYear() const;
     ///
-    void setId(unsigned id);
+    void setId(unsigned long long id);
     ///
     void setTitle(const string & title);
     ///

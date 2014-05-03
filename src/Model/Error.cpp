@@ -36,6 +36,12 @@ string Error::getErrorString(unsigned errorNo)
     case ERROR_OUT_OF_MEMORY:
         errorString = "Error Code 2: Program is out of memory.";
         break;
+    case ERROR_NO_SUCH_PAGE_MLIB:
+        errorString = "Error Code 3: Could not request new main library page.";
+        break;
+    case ERROR_UNKNOWN_ITEM_TYPE:
+        errorString = "Error Code 4: Could not determine item type.";
+        break;
     default:
         break;
     }

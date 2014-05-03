@@ -35,3 +35,18 @@ void Videogame::setPlatform(unsigned platform)
 {
     this->platform = platform;
 }
+
+string Videogame::getRatingString(unsigned esrbRating)
+{
+    string ratingString = "";
+    
+    return ratingString;
+}
+
+string Videogame::getPlatformString(unsigned platform)
+{
+    string platformString = "";
+    
+    return platformString;
+}
+

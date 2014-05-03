@@ -27,7 +27,7 @@ EntertainmentItem::~EntertainmentItem()
 /**
  *  @details
  */
-unsigned EntertainmentItem::getId() const
+unsigned long long EntertainmentItem::getId() const
 {
     return id;
 }
@@ -67,7 +67,7 @@ unsigned EntertainmentItem::getYear() const
 /**
  *  @details
  */
-void EntertainmentItem::setId(unsigned id)
+void EntertainmentItem::setId(unsigned long long id)
 {
     this->id = id;
 }

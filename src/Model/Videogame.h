@@ -44,6 +44,11 @@ public:
     void setEsrbRating(unsigned esrbRating);
     ///
     void setPlatform(unsigned platform);
+    
+    ///
+    static string getRatingString(unsigned esrbRating);
+    ///
+    static string getPlatformString(unsigned platform);
 };
 
 #endif /// Not VIDEOGAME_H

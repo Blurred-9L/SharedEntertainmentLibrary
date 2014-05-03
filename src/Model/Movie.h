@@ -58,6 +58,9 @@ public:
     void setDuration(const QTime & duration);
     ///
     void setRating(unsigned rating);
+    
+    ///
+    static string getRatingString(unsigned rating);
 };
 
 #endif /// Not MOVIE_H

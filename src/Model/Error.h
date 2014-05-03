@@ -21,7 +21,9 @@ public:
     enum ErrorType {
         INVALID_ERROR,
         ERROR_NO_CONNECTION,
-        ERROR_OUT_OF_MEMORY
+        ERROR_OUT_OF_MEMORY,
+        ERROR_NO_SUCH_PAGE_MLIB,
+        ERROR_UNKNOWN_ITEM_TYPE
     };
     
     ///

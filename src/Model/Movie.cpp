@@ -69,3 +69,10 @@ void Movie::setRating(unsigned rating)
 {
     this->rating = rating;
 }
+
+string Movie::getRatingString(unsigned rating)
+{
+    string ratingString = "";
+    
+    return ratingString;
+}
