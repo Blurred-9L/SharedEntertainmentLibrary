@@ -1,0 +1,43 @@
+#ifndef ERROR_H
+#define ERROR_H
+
+#include <string>
+using std::string;
+
+/**
+ *  @class  Error
+ */
+class Error {
+private:
+    ///
+    unsigned errorNo;
+    ///
+    string errorString;
+
+public:
+    /**
+     *  @enum   ErrorType
+     */
+    enum ErrorType {
+        INVALID_ERROR,
+        ERROR_NO_CONNECTION,
+        ERROR_OUT_OF_MEMORY
+    };
+    
+    ///
+    explicit Error(unsigned errorNo);
+    ///
+    virtual ~Error();
+    ///
+    unsigned getErrorNo() const;
+    ///
+    const string & getErrorString() const;
+    
+    ///
+    static string getErrorString(unsigned errorNo);
+    ///
+    static void raiseError(unsigned errorNo, bool abortProgram = false);
+    
+};
+
+#endif /// Not ERROR_H

@@ -1,5 +1,6 @@
 #include "DBConnection.h"
 #include "QueryResult.h"
+#include "../Model/Error.h"
 
 #include <QtSql/QSqlQuery>
 
@@ -42,10 +43,10 @@ DBConnection::DBConnection()
         dbOpen = db.open();
         delete [] connectionData;
         if (!dbOpen) {
-            /// Handle error 1: Could not open database.
+            Error::raiseError(Error::ERROR_NO_CONNECTION, true);
         }
     } else {
-        /// Handle error 2: Could not open database. Data file missing.
+        Error::raiseError(Error::ERROR_NO_CONNECTION, true);
     }
 }
 
@@ -73,6 +74,8 @@ QueryResult * DBConnection::query(const string & queryString) const
         ok = queryObj->exec(queryString.c_str());
         if (ok) {
             result = new (std::nothrow) QueryResult(queryObj);
+        } else {
+            Error::raiseError(Error::ERROR_OUT_OF_MEMORY);
         }
     }
     
@@ -98,7 +101,7 @@ DBConnection & DBConnection::getInstance()
     if (dbCon == 0) {
         dbCon = new (std::nothrow) DBConnection();
         if (dbCon == 0) {
-            /// Handle error 3: No more memory.
+            Error::raiseError(Error::ERROR_NO_CONNECTION, true);
         }
     }
     
@@ -115,7 +118,7 @@ string * getConnectionData()
     connectionData = new (std::nothrow) string[_DB_DATA_SIZE];
     if (connectionData != 0) {
         connectionData[_HOST_IDX] = "localhost";
-        connectionData[_DB_NAME_IDX] = "test";
+        connectionData[_DB_NAME_IDX] = "SEL";
         connectionData[_DB_USER_IDX] = "blurred";
         connectionData[_DB_PSWD_IDX] = "blurred";
     }
