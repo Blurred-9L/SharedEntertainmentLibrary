@@ -74,7 +74,7 @@ SELUserAccountWidget::SELUserAccountWidget(QWidget * parent) :
     tableButtonLayout->addWidget(nextPageButton);
     
     requestIds = new unsigned long long[ROWS_PER_PAGE];
-    for (unsigned i = 0; i < ROWS_PER_PAGE; i++) {
+    for (int i = 0; i < ROWS_PER_PAGE; i++) {
         requestIds[i] = 0;
     }
     

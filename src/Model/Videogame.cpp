@@ -8,7 +8,7 @@ Videogame::Videogame() :
 Videogame::Videogame(const string & title, const string & genre,
                      const string & publisher, unsigned year,
                      unsigned esrbRating, unsigned platform) :
-    EntertainmentItem(), esrbRating(esrbRating), platform(platform)
+    EntertainmentItem(title, genre, publisher, year), esrbRating(esrbRating), platform(platform)
 {
 }
 
