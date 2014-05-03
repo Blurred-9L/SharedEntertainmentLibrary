@@ -14,7 +14,7 @@ Member::~Member()
 {
 }
 
-unsigned Member::getId() const
+unsigned long long Member::getId() const
 {
     return id;
 }
@@ -34,7 +34,7 @@ const string & Member::getPassword() const
     return password;
 }
 
-void Member::setId(unsigned id)
+void Member::setId(unsigned long long id)
 {
     this->id = id;
 }

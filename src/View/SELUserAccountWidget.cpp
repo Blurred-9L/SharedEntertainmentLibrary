@@ -1,6 +1,11 @@
 #include "SELUserAccountWidget.h"
+#include "../Model/LoanRequest.h"
+#include "../Model/OwnedItem.h"
+#include "../Model/Member.h"
+#include "../Model/Error.h"
 
 #include <QtGui/QTableWidget>
+#include <QtGui/QTableWidgetItem>
 #include <QtGui/QPushButton>
 #include <QtGui/QLineEdit>
 #include <QtGui/QLabel>
@@ -79,9 +84,15 @@ SELUserAccountWidget::SELUserAccountWidget(QWidget * parent) :
     }
     
     /// Signals needed
-    /// Pressed previous page button -> load previous table page.
-    /// Pressed next page button -> load next table page.
-    /// Double clicked item on table -> show item details dialog.
+    /// Pressed previous page button, load previous table page.
+    connect(previousPageButton, SIGNAL(clicked()),
+            this, SLOT(updatePageIndexPrevious()));
+    /// Pressed next page button, load next table page.
+    connect(nextPageButton, SIGNAL(clicked()),
+            this, SLOT(updatePageIndexNext()));
+    /// Double clicked item on table, show item details dialog.
+    connect(messageTableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem *)),
+            this, SLOT(emitIdShowData(QTableWidgetItem *)));
 }
 
 SELUserAccountWidget::~SELUserAccountWidget()
@@ -90,3 +101,91 @@ SELUserAccountWidget::~SELUserAccountWidget()
         delete [] requestIds;
     }
 }
+
+void SELUserAccountWidget::updateMessagesTable(LoanRequest ** requests, unsigned numRequests)
+{
+    unsigned i;
+    
+    for (i = 0; i < numRequests; i++) {
+        messageTableWidget->item(i, 0)->setText(requests[i]->getStartDate().toString("dd/MM/yyyy"));
+        messageTableWidget->item(i, 1)->setText(requests[i]->getRequestedItem().getOwner().getUsername().c_str());
+        messageTableWidget->item(i, 2)->setText(LoanRequest::getRequestStatusString(requests[i]->getRequestStatus()).c_str());
+    }
+    
+    while (i < (unsigned)ROWS_PER_PAGE) {
+        messageTableWidget->item(i, 0)->setText("");
+        messageTableWidget->item(i, 1)->setText("");
+        messageTableWidget->item(i, 2)->setText("");
+        i++;
+    }
+}
+
+/////////////
+// Private //
+/////////////
+
+void SELUserAccountWidget::updatePageIndexNext()
+{
+    int pageToGet;
+    bool ok;
+    
+    pageToGet = currentPageLabel->text().toInt(&ok);
+    
+    if (ok) {
+        pageToGet++;
+        emit getUserMessagesPage(pageToGet);
+        currentPageLabel->setNum(pageToGet);
+    }
+}
+
+void SELUserAccountWidget::updatePageIndexPrevious()
+{
+    int pageToGet;
+    bool ok;
+    
+    pageToGet = currentPageLabel->text().toInt(&ok);
+    
+    if (ok) {
+        pageToGet--;
+        if (pageToGet > 0) {
+            emit getUserMessagesPage(pageToGet);
+            currentPageLabel->setNum(pageToGet);
+        }
+    }
+}
+
+void SELUserAccountWidget::emitIdShowData(QTableWidgetItem * item)
+{
+    unsigned long long id = findId(item);
+    
+    if (id > 0) {
+        emit showRequestReplyDialog(id);
+    } else {
+        Error::raiseError(Error::ERROR_REQ_ID_NOT_FOUND);
+    }
+}
+
+unsigned long long SELUserAccountWidget::findId(QTableWidgetItem * item)
+{
+    int i, j, row;
+    bool found = false;
+    unsigned long long foundId;
+    
+    for (i = 0; i < ROWS_PER_PAGE && !found; i++) {
+        for (j = 0; j < NUM_COLUMNS && found; j++) {
+            if (item == messageTableWidget->item(i, j)) {
+                row = i;
+                found = true;
+            }
+        }
+    }
+    
+    if (found) {
+        foundId = requestIds[row];
+    } else {
+        foundId = 0;
+    }
+    
+    return foundId;
+}
+

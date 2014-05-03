@@ -4,6 +4,9 @@
 #include <QtCore/QDate>
 #include <QtCore/QDateTime>
 
+#include <string>
+using std::string;
+
 class Member;
 class OwnedItem;
 
@@ -12,6 +15,8 @@ class OwnedItem;
  */
 class Loan {
 private:
+    ///
+    unsigned long long id;
     ///
     Member * requestingMember;
     ///
@@ -30,6 +35,8 @@ public:
     ///
     virtual ~Loan();
     ///
+    unsigned long long getId() const;
+    ///
     const Member & getRequestingMember() const;
     ///
     Member & getRequestingMember();
@@ -46,6 +53,8 @@ public:
     ///
     QDateTime & getDuration();
     ///
+    void setId(unsigned long long id);
+    ///
     void setRequestingMember(Member * requestingMember);
     ///
     void setRequestedItem(OwnedItem * requestedItem);
@@ -53,6 +62,8 @@ public:
     void setStartDate(const QDate & startDate);
     ///
     void setDuration(const QDateTime & duration);
+    ///
+    string toString() const;
 };
 
 #endif /// Not LOAN_H

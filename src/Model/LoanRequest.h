@@ -12,9 +12,11 @@ class OwnedItem;
 class LoanRequest : public Loan {
 private:
     ///
+    unsigned long long requestId;
+    ///
     bool replySent;
     ///
-    unsigned requestStatus;
+    unsigned long long requestStatus;
     ///
     string message;
     
@@ -35,17 +37,26 @@ public:
     ///
     virtual ~LoanRequest();
     ///
+    unsigned long long getRequestId() const;
+    ///
     bool getReplySent() const;
     ///
-    unsigned getRequestStatus() const;
+    unsigned long long getRequestStatus() const;
     ///
     const string & getMessage() const;
     ///
+    void setRequestId(unsigned long long requestId);
+    ///
     void setReplySent(bool replySent);
     ///
-    void setRequestStatus(unsigned requestStatus);
+    void setRequestStatus(unsigned long long requestStatus);
     ///
     void setMessage(const string & message);
+    ///
+    string toString() const;
+    
+    ///
+    static string getRequestStatusString(unsigned long long requestStatus);
 };
 
 #endif /// Not LOAN_REQUEST_H

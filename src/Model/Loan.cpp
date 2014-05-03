@@ -27,6 +27,11 @@ Loan::~Loan()
     }
 }
 
+unsigned long long Loan::getId() const
+{
+    return id;
+}
+
 const Member & Loan::getRequestingMember() const
 {
     return *requestingMember;
@@ -67,6 +72,11 @@ QDateTime & Loan::getDuration()
     return duration;
 }
 
+void Loan::setId(unsigned long long id)
+{
+    this->id = id;
+}
+
 void Loan::setRequestingMember(Member * requestingMember)
 {
     if (this->requestingMember != 0) {
@@ -93,4 +103,15 @@ void Loan::setDuration(const QDateTime & duration)
 {
     this->duration.setDate(duration.date());
     this->duration.setTime(duration.time());
+}
+
+string Loan::toString() const
+{
+    string returnString;
+    
+    returnString += requestedItem->getTitle();
+    returnString += " - ";
+    returnString += requestedItem->getOwner().getUsername();
+    
+    return returnString;
 }

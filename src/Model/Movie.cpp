@@ -8,7 +8,7 @@ Movie::Movie() :
 Movie::Movie(const string & title, const string & genre,
              const string & publisher, unsigned year,
              const string & director, const QTime & duration,
-             unsigned rating) :
+             unsigned long long rating) :
     EntertainmentItem(title, genre, publisher, year), mainActors(),
     duration(duration.hour(), duration.minute(), duration.second()),
     rating(rating)
@@ -44,7 +44,7 @@ QTime & Movie::getDuration()
     return duration;
 }
 
-unsigned Movie::getRating() const
+unsigned long long Movie::getRating() const
 {
     return rating;
 }
@@ -65,12 +65,12 @@ void Movie::setDuration(const QTime & duration)
                           duration.second());
 }
 
-void Movie::setRating(unsigned rating)
+void Movie::setRating(unsigned long long rating)
 {
     this->rating = rating;
 }
 
-string Movie::getRatingString(unsigned rating)
+string Movie::getRatingString(unsigned long long rating)
 {
     string ratingString = "";
     

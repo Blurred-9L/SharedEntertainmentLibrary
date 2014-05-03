@@ -7,7 +7,8 @@ Videogame::Videogame() :
 
 Videogame::Videogame(const string & title, const string & genre,
                      const string & publisher, unsigned year,
-                     unsigned esrbRating, unsigned platform) :
+                     unsigned long long esrbRating,
+                     unsigned long long platform) :
     EntertainmentItem(title, genre, publisher, year), esrbRating(esrbRating), platform(platform)
 {
 }
@@ -16,34 +17,34 @@ Videogame::~Videogame()
 {
 }
 
-unsigned Videogame::getEsrbRating() const
+unsigned long long Videogame::getEsrbRating() const
 {
     return esrbRating;
 }
 
-unsigned Videogame::getPlatform() const
+unsigned long long Videogame::getPlatform() const
 {
     return platform;
 }
 
-void Videogame::setEsrbRating(unsigned esrbRating)
+void Videogame::setEsrbRating(unsigned long long esrbRating)
 {
     this->esrbRating = esrbRating;
 }
 
-void Videogame::setPlatform(unsigned platform)
+void Videogame::setPlatform(unsigned long long platform)
 {
     this->platform = platform;
 }
 
-string Videogame::getRatingString(unsigned esrbRating)
+string Videogame::getRatingString(unsigned long long esrbRating)
 {
     string ratingString = "";
     
     return ratingString;
 }
 
-string Videogame::getPlatformString(unsigned platform)
+string Videogame::getPlatformString(unsigned long long platform)
 {
     string platformString = "";
     

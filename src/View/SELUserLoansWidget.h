@@ -7,10 +7,15 @@ class QListWidget;
 class QPushButton;
 class QLabel;
 
+class Loan;
+class LoanRequest;
+
 /**
  *  @class  SELUserLoansWidget
  */
 class SELUserLoansWidget : public QWidget {
+Q_OBJECT
+
 private:
     ///
     QListWidget * loansListWidget;
@@ -36,15 +41,37 @@ private:
     unsigned long long * loanIds;
     ///
     unsigned long long * requestIds;
-    
+
+public:
     ///
     static const unsigned ITEMS_PER_PAGE;
 
-public:
     ///
     SELUserLoansWidget(QWidget * parent = 0);
     ///
     virtual ~SELUserLoansWidget();
+    
+public slots:
+    ///
+    void updateLoansPage(Loan ** loans, unsigned numLoans);
+    ///
+    void updateRequestsPage(LoanRequest ** requests, unsigned numRequests);
+    
+private slots:
+    ///
+    void updateLoansPageNext();
+    ///
+    void updateLoansPagePrev();
+    ///
+    void updateRequestsPageNext();
+    ///
+    void updateRequestsPagePrev();
+
+signals:
+    ///
+    void getUserLoansPage(int page);
+    ///
+    void getUserRequestsPage(int page);
 };
 
 #endif /// Not SEL_USER_LOANS_WIDGET_H

@@ -11,9 +11,11 @@ class Member;
 class OwnedItem : public EntertainmentItem {
 private:
     ///
-    unsigned itemType;
+    unsigned long long ownedItemId;
     ///
-    unsigned itemPolicy;
+    unsigned long long itemType;
+    ///
+    unsigned long long itemPolicy;
     ///
     Member * owner;
     
@@ -36,22 +38,27 @@ public:
     OwnedItem();
     ///
     OwnedItem(const string & title, const string & genre,
-              const string & publisher, unsigned year, unsigned itemType,
-              unsigned itemPolicy, Member * owner);
+              const string & publisher, unsigned year,
+              unsigned long long itemType,
+              unsigned long long itemPolicy, Member * owner);
     ///
     virtual ~OwnedItem();
     ///
-    unsigned getItemType() const;
+    unsigned long long getOwnedItemId() const;
     ///
-    unsigned getItemPolicy() const;
+    unsigned long long getItemType() const;
+    ///
+    unsigned long long getItemPolicy() const;
     ///
     const Member & getOwner() const;
     ///
     Member & getOwner();
     ///
-    void setItemType(unsigned itemType);
+    void setOwnedItemId(unsigned long long ownedItemId);
     ///
-    void setItemPolicy(unsigned itemPolicy);
+    void setItemType(unsigned long long itemType);
+    ///
+    void setItemPolicy(unsigned long long itemPolicy);
     ///
     void setOwner(Member * owner);
     ///

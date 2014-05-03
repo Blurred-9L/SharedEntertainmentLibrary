@@ -38,14 +38,14 @@ private:
     unsigned long long * itemIds;
     
     ///
-    static const unsigned ITEMS_PER_PAGE;
-    
-    ///
     void replaceLabelText(const QString & text, int index);
     ///
     unsigned long long findId(QListWidgetItem * item);
     
 public:
+    ///
+    static const unsigned ITEMS_PER_PAGE;
+
     ///
     SELUserLibraryWidget(QWidget * parent = 0);
     ///

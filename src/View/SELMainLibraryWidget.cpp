@@ -175,6 +175,7 @@ void SELMainLibraryWidget::updateItemPage(EntertainmentItem ** items,
         if (removedItem != 0) {
             delete removedItem;
         }
+        i++;
     }
 }
 

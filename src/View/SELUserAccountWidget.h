@@ -4,14 +4,19 @@
 #include <QtGui/QWidget>
 
 class QTableWidget;
+class QTableWidgetItem;
 class QPushButton;
 class QLineEdit;
 class QLabel;
+
+class LoanRequest;
 
 /**
  *  @class  SELUserAccountWidget
  */
 class SELUserAccountWidget : public QWidget {
+Q_OBJECT
+
 private:
     ///
     QLabel * usernameLabel;
@@ -35,15 +40,35 @@ private:
     unsigned long long * requestIds;
     
     ///
+    unsigned long long findId(QTableWidgetItem * item);
+
+public:
+    ///
     static const int ROWS_PER_PAGE;
     ///
     static const int NUM_COLUMNS;
-
-public:
+    
     ///
     SELUserAccountWidget(QWidget * parent = 0);
     ///
     virtual ~SELUserAccountWidget();
+    
+public slots:
+    void updateMessagesTable(LoanRequest ** requests, unsigned numRequests);
+    
+private slots:
+    ///
+    void updatePageIndexNext();
+    ///
+    void updatePageIndexPrevious();
+    ///
+    void emitIdShowData(QTableWidgetItem * item);
+
+signals:
+    ///
+    void getUserMessagesPage(int page);
+    ///
+    void showRequestReplyDialog(unsigned long long id);
 };
 
 #endif /// Not SEL_USER_ACCOUNT_WIDGET_H

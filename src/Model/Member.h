@@ -10,7 +10,7 @@ using std::string;
 class Member {
 private:
     ///
-    unsigned id;
+    unsigned long long id;
     ///
     string username;
     ///
@@ -26,7 +26,7 @@ public:
     ///
     virtual ~Member();
     ///
-    unsigned getId() const;
+    unsigned long long getId() const;
     ///
     const string & getUsername() const;
     ///
@@ -34,7 +34,7 @@ public:
     ///
     const string & getPassword() const;
     ///
-    void setId(unsigned id);
+    void setId(unsigned long long id);
     ///
     void setUsername(const string & username);
     ///

@@ -51,6 +51,18 @@ string Error::getErrorString(unsigned errorNo)
     case ERROR_NO_ITEM_SELECTED:
         errorString = "Error Code 7: No item selected.";
         break;
+    case ERROR_NO_SUCH_PAGE_ULIB:
+        errorString = "Error Code 8: Could not request new user library page.";
+        break;
+    case ERROR_NO_SUCH_PAGE_LOAN:
+        errorString = "Error Code 9: Could not request new user loans page.";
+        break;
+    case ERROR_NO_SUCH_PAGE_REQ:
+        errorString = "Error Code 10: Could not request new user loan requests page.";
+        break;
+    case ERROR_REQ_ID_NOT_FOUND:
+        errorString = "Error Code 11: Could not find requested loan request id.";
+        break;
     default:
         break;
     }

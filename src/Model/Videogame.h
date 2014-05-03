@@ -9,9 +9,9 @@
 class Videogame : public EntertainmentItem {
 private:
     ///
-    unsigned esrbRating;
+    unsigned long long esrbRating;
     ///
-    unsigned platform;
+    unsigned long long platform;
     
 public:
     /**
@@ -32,23 +32,24 @@ public:
     Videogame();
     ///
     Videogame(const string & title, const string & genre,
-              const string & publisher, unsigned year, unsigned esrbRating,
-              unsigned platform);
+              const string & publisher, unsigned year,
+              unsigned long long esrbRating,
+              unsigned long long platform);
     ///
     virtual ~Videogame();
     ///
-    unsigned getEsrbRating() const;
+    unsigned long long getEsrbRating() const;
     ///
-    unsigned getPlatform() const;
+    unsigned long long getPlatform() const;
     ///
-    void setEsrbRating(unsigned esrbRating);
+    void setEsrbRating(unsigned long long esrbRating);
     ///
-    void setPlatform(unsigned platform);
+    void setPlatform(unsigned long long platform);
     
     ///
-    static string getRatingString(unsigned esrbRating);
+    static string getRatingString(unsigned long long esrbRating);
     ///
-    static string getPlatformString(unsigned platform);
+    static string getPlatformString(unsigned long long platform);
 };
 
 #endif /// Not VIDEOGAME_H

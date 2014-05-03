@@ -185,6 +185,7 @@ void SELUserLibraryWidget::updateItemPage(EntertainmentItem ** items,
         if (removedItem != 0) {
             delete removedItem;
         }
+        i++;
     }
 }
 
@@ -204,7 +205,7 @@ void SELUserLibraryWidget::updatePageIndexNext()
         emit getUserLibraryPage(pageToGet);
         currentPageLabel->setNum(pageToGet);
     } else {
-        Error::raiseError(Error::ERROR_NO_SUCH_PAGE_MLIB);
+        Error::raiseError(Error::ERROR_NO_SUCH_PAGE_ULIB);
     }
 }
 
@@ -222,7 +223,7 @@ void SELUserLibraryWidget::updatePageIndexPrevious()
             currentPageLabel->setNum(pageToGet);
         }
     } else {
-        Error::raiseError(Error::ERROR_NO_SUCH_PAGE_MLIB);
+        Error::raiseError(Error::ERROR_NO_SUCH_PAGE_ULIB);
     }
 }
 

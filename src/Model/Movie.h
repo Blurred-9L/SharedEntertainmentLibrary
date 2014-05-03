@@ -20,7 +20,7 @@ private:
     ///
     QTime duration;
     ///
-    unsigned rating;
+    unsigned long long rating;
     
 public:
     /**
@@ -35,7 +35,7 @@ public:
     ///
     Movie(const string & title, const string & genre, const string & publisher,
           unsigned year, const string & director, const QTime & duration,
-          unsigned rating);
+          unsigned long long rating);
     ///
     virtual ~Movie();
     ///
@@ -49,7 +49,7 @@ public:
     ///
     QTime & getDuration();
     ///
-    unsigned getRating() const;
+    unsigned long long getRating() const;
     ///
     void setDirector(const string & director);
     ///
@@ -57,10 +57,10 @@ public:
     ///
     void setDuration(const QTime & duration);
     ///
-    void setRating(unsigned rating);
+    void setRating(unsigned long long rating);
     
     ///
-    static string getRatingString(unsigned rating);
+    static string getRatingString(unsigned long long rating);
 };
 
 #endif /// Not MOVIE_H
