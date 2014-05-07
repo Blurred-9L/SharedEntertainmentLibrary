@@ -36,7 +36,9 @@ public:
         ERROR_PASSWORD_LONG,
         ERROR_PASSWORD_FORMAT,
         ERROR_USERNAME_SHORT,
-        ERROR_PASSWORD_SHORT
+        ERROR_PASSWORD_SHORT,
+        ERROR_LOGIN_FAIL,
+        ERROR_QUERY_FAIL
     };
     
     ///

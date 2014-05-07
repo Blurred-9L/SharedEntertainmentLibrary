@@ -80,6 +80,13 @@ string Error::getErrorString(unsigned errorNo)
         break;
     case ERROR_PASSWORD_SHORT:
         errorString = "Error Code 17: Password was too short.";
+        break;
+    case ERROR_LOGIN_FAIL:
+        errorString = "Error Code 18: Could not login with the given username and password.";
+        break;
+    case ERROR_QUERY_FAIL:
+        errorString = "Error Code 19: The query could not be completed.";
+        break;
     default:
         break;
     }

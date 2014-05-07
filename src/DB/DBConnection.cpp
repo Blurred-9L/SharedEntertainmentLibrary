@@ -74,8 +74,11 @@ QueryResult * DBConnection::query(const string & queryString) const
         ok = queryObj->exec(queryString.c_str());
         if (ok) {
             result = new (std::nothrow) QueryResult(queryObj);
+            if (result == 0) {
+                Error::raiseError(Error::ERROR_OUT_OF_MEMORY);
+            }
         } else {
-            Error::raiseError(Error::ERROR_OUT_OF_MEMORY);
+            Error::raiseError(Error::ERROR_QUERY_FAIL);
         }
     }
     

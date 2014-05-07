@@ -16,4 +16,5 @@ SELMainWindow::~SELMainWindow()
 
 void SELMainWindow::receiveUserId(long long int userId)
 {
+    this->show();
 }
