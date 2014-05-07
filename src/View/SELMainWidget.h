@@ -21,12 +21,18 @@ private:
     SELUserAccountWidget * userAccountWidget;
     ///
     SELUserLoansWidget * userLoansWidget;
+    ///
+    unsigned long long userId;
     
 public:
     ///
     SELMainWidget(QWidget * parent = 0);
     ///
     virtual ~SELMainWidget();
+    ///
+    unsigned long long getUserId() const;
+    ///
+    void setUserId(unsigned long long userId);
 };
 
 #endif /// Not SEL_MAIN_WIDGET_H
