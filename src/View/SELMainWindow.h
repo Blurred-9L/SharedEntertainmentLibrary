@@ -20,10 +20,6 @@ public:
     SELMainWindow();
     ///
     virtual ~SELMainWindow();
-    
-public slots:
-    ///
-    void receiveUserId(long long int userId);
 };
 
 #endif /// Not SEL_MAIN_WINDOW_H

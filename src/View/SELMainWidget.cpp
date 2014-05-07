@@ -24,13 +24,3 @@ SELMainWidget::SELMainWidget(QWidget * parent) :
 SELMainWidget::~SELMainWidget()
 {
 }
-
-unsigned long long SELMainWidget::getUserId() const
-{
-    return userId;
-}
-
-void SELMainWidget::setUserId(unsigned long long userId)
-{
-    this->userId = userId;
-}

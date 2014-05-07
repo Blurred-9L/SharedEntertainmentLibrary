@@ -1,6 +1,6 @@
 #include "SELLoginDialog.h"
+#include "../Controller/SELController.h"
 #include "../Model/Error.h"
-#include "../Model/LoginModel.h"
 
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
@@ -14,8 +14,8 @@ const int MAX_PASSWORD_LENGTH = 18;
 const int MIN_USERNAME_LENGTH = 6;
 const int MIN_PASSWORD_LENGTH = 8;
 
-SELLoginDialog::SELLoginDialog(QWidget * parent) :
-    QDialog(parent)
+SELLoginDialog::SELLoginDialog(SELController & controller, QWidget * parent) :
+    QDialog(parent), controller(controller)
 {
     QVBoxLayout * mainLayout = new QVBoxLayout(this);
     QHBoxLayout * usernameLayout = new QHBoxLayout();
@@ -53,7 +53,7 @@ SELLoginDialog::SELLoginDialog(QWidget * parent) :
     connect(acceptButton, SIGNAL(clicked()), this, SLOT(validateInput()));
     /// When input has been validated, try login
     /// If login successful, return true.
-    connect(this, SIGNAL(loginSuccessful(long long int)),
+    connect(this, SIGNAL(loginSuccessful()),
             this, SLOT(accept()));
     /// If login not successful, show wrong login dialog.
     /// If input is wrong, show wrong input dialog.
@@ -65,6 +65,10 @@ SELLoginDialog::~SELLoginDialog()
 {
 }
 
+/////////////
+// Private //
+/////////////
+
 void SELLoginDialog::validateInput()
 {
     QRegExp usernameRegex("[a-zA-Z_$&!][a-zA-Z_0-9$&!]{5,23}");
@@ -73,11 +77,10 @@ void SELLoginDialog::validateInput()
     QRegExpValidator passwordValidator(passwordRegex);
     QString username = usernameLineEdit->text();
     QString password = passwordLineEdit->text();
-    LoginModel loginModel;
     bool validInput = true;
     bool correctUsername = false;
     bool correctPassword = false;
-    unsigned long long userId;
+    bool loginSuccess = false;
     int pos = 0;
     
     correctUsername = (usernameValidator.validate(username, pos) == QValidator::Acceptable);
@@ -85,9 +88,9 @@ void SELLoginDialog::validateInput()
     validInput = (correctUsername && correctPassword);
     
     if (validInput) {
-        userId = loginModel.tryLogin(username.toAscii().data(), password.toAscii().data());
-        if (userId != 0) {
-            emit loginSuccessful(userId);
+        loginSuccess = controller.memberLogIn(username.toAscii().data(), password.toAscii().data());
+        if (loginSuccess) {
+            emit loginSuccessful();
         } else {
             Error::raiseError(Error::ERROR_LOGIN_FAIL);
         }

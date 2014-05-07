@@ -1,3 +1,4 @@
+#include "./Controller/SELController.h"
 #include "./View/SELMainWindow.h"
 #include "./View/SELLoginDialog.h"
 #include "./DB/DBConnection.h"
@@ -6,9 +7,10 @@
 
 int main(int argc, char * argv[])
 {
+    SELController controller;
     QApplication app(argc, argv);
     SELMainWindow window;
-    SELLoginDialog loginDialog;
+    SELLoginDialog loginDialog(controller);
     
     /**
     - Instantiate the login dialog.
@@ -21,8 +23,8 @@ int main(int argc, char * argv[])
     window.setAttribute(Qt::WA_QuitOnClose);
     loginDialog.show();
     
-    QObject::connect(&loginDialog, SIGNAL(loginSuccessful(long long int)),
-                     &window, SLOT(receiveUserId(long long int)));
+    QObject::connect(&loginDialog, SIGNAL(loginSuccessful()),
+                     &window, SLOT(show()));
     
     app.exec();
     
