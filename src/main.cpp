@@ -1,4 +1,5 @@
 #include "./View/SELMainWindow.h"
+#include "./View/SELLoginDialog.h"
 
 #include <QtGui/QApplication>
 
@@ -6,6 +7,7 @@ int main(int argc, char * argv[])
 {
     QApplication app(argc, argv);
     SELMainWindow window;
+    SELLoginDialog loginDialog;
     
     /**
     - Instantiate the login dialog.
@@ -16,7 +18,10 @@ int main(int argc, char * argv[])
     */
     
     window.setAttribute(Qt::WA_QuitOnClose);
-    window.show();
+    loginDialog.show();
+    
+    QObject::connect(&loginDialog, SIGNAL(loginSuccessful(long long int)),
+                     &window, SLOT(receiveUserId(long long int)));
     
     app.exec();
     

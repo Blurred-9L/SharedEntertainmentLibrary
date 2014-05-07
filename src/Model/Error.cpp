@@ -63,6 +63,23 @@ string Error::getErrorString(unsigned errorNo)
     case ERROR_REQ_ID_NOT_FOUND:
         errorString = "Error Code 11: Could not find requested loan request id.";
         break;
+    case ERROR_USERNAME_LONG:
+        errorString = "Error Code 12: Username was too long.";
+        break;
+    case ERROR_USERNAME_FORMAT:
+        errorString = "Error Code 13: Invalid character found on username.";
+        break;
+    case ERROR_PASSWORD_LONG:
+        errorString = "Error Code 14: Password was too long.";
+        break;
+    case ERROR_PASSWORD_FORMAT:
+        errorString = "Error Code 15: Invalid character found on password.";
+        break;
+    case ERROR_USERNAME_SHORT:
+        errorString = "Error Code 16: Username was too short.";
+        break;
+    case ERROR_PASSWORD_SHORT:
+        errorString = "Error Code 17: Password was too short.";
     default:
         break;
     }

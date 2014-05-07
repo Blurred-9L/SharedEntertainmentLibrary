@@ -13,3 +13,7 @@ SELMainWindow::SELMainWindow() :
 SELMainWindow::~SELMainWindow()
 {
 }
+
+void SELMainWindow::receiveUserId(long long int userId)
+{
+}
