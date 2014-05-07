@@ -1,5 +1,6 @@
 #include "./View/SELMainWindow.h"
 #include "./View/SELLoginDialog.h"
+#include "./DB/DBConnection.h"
 
 #include <QtGui/QApplication>
 
@@ -24,6 +25,8 @@ int main(int argc, char * argv[])
                      &window, SLOT(receiveUserId(long long int)));
     
     app.exec();
+    
+    DBConnection::deleteInstance();
     
     return 0;
 }

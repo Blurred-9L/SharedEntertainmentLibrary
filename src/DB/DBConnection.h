@@ -31,6 +31,8 @@ public:
     
     ///
     static DBConnection & getInstance();
+    ///
+    static void deleteInstance();
 };
 
 #endif /// Not DB_CONNECTION_H

@@ -114,6 +114,17 @@ DBConnection & DBConnection::getInstance()
 /**
  *  @details
  */
+void DBConnection::deleteInstance()
+{
+    if (dbCon != 0) {
+        delete dbCon;
+        dbCon = 0;
+    }
+}
+
+/**
+ *  @details
+ */
 string * getConnectionData()
 {
     string * connectionData = 0;
