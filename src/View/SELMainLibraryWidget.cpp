@@ -247,7 +247,9 @@ void SELMainLibraryWidget::emitIdGetData(QListWidgetItem * item)
     
     if (id > 0) {
         eItem = controller.retrieveItem(id, itemType);
-        updateItemInfo(*eItem, itemType);
+        if (eItem != 0) {
+            updateItemInfo(*eItem, itemType);
+        }
     } else {
         Error::raiseError(Error::ERROR_ITEM_ID_NOT_FOUND);
     }

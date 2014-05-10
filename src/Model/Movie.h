@@ -27,7 +27,8 @@ public:
      *  @enum   MovieRating
      */
     enum MovieRating {
-        RATING_INVALID = 0
+        RATING_INVALID = 0,
+        RATING_MOVIE_R = 2
     };
     
     ///

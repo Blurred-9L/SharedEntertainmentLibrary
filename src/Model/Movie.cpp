@@ -9,8 +9,8 @@ Movie::Movie(const string & title, const string & genre,
              const string & publisher, unsigned year,
              const string & director, const QTime & duration,
              unsigned long long rating) :
-    EntertainmentItem(title, genre, publisher, year), mainActors(),
-    duration(duration.hour(), duration.minute(), duration.second()),
+    EntertainmentItem(title, genre, publisher, year), director(director),
+    mainActors(), duration(duration.hour(), duration.minute(), duration.second()),
     rating(rating)
 {
 }
@@ -73,6 +73,12 @@ void Movie::setRating(unsigned long long rating)
 string Movie::getRatingString(unsigned long long rating)
 {
     string ratingString = "";
+    
+    switch (rating) {
+    case RATING_MOVIE_R:
+        ratingString = "Rating R";
+        break;
+    }
     
     return ratingString;
 }

@@ -1,6 +1,7 @@
 #include "ItemModel.h"
 #include "EntertainmentItem.h"
 #include "Book.h"
+#include "Movie.h"
 #include "MusicAlbum.h"
 #include "Videogame.h"
 #include "Error.h"
@@ -74,6 +75,7 @@ EntertainmentItem * ItemModel::getItem(unsigned long long id, unsigned long long
         item = getBookItem(id);
         break;
     case 2:
+        item = getMovieItem(id);
         break;
     case 3:
         item = getMusicItem(id);
@@ -161,6 +163,72 @@ bool ItemModel::getBookAuthors(Book * book)
                 authors.push_back(author);
             }
             book->setAuthors(authors);
+            delete result;
+            success = true;
+        }
+    }
+    
+    return success;
+}
+
+Movie * ItemModel::getMovieItem(unsigned long long id)
+{
+    Movie * item = 0;
+    QueryResult * result = 0;
+    stringstream stream(stringstream::out);
+    
+    stream << "SELECT Item.id, title, Genre.genre, Publisher.publisher, "
+              "year, name, duration, Rating.rating FROM Item "
+              "JOIN Genre ON Item.genre = Genre.id "
+              "JOIN Publisher ON Item.publisher = Publisher.id "
+              "JOIN Movie_Data ON Item.movie_id = Movie_Data.id "
+              "JOIN Person ON Movie_Data.director_id = Person.id "
+              "JOIN Rating ON Movie_Data.rating = Rating.id "
+              "WHERE Item.id = " << id << ";";
+              
+    result = dbCon.query(stream.str());
+    if (result != 0) {
+        if (result->next()) {
+            item = new Movie();
+            item->setId(result->value(0).toULongLong());
+            item->setTitle(result->value(1).toString().toAscii().data());
+            item->setGenre(result->value(2).toString().toAscii().data());
+            item->setPublisher(result->value(3).toString().toAscii().data());
+            item->setYear(result->value(4).toUInt());
+            item->setDirector(result->value(5).toString().toAscii().data());
+            item->setDuration(result->value(6).toTime());
+            item->setRating(result->value(7).toULongLong());
+            getMovieActors(item);
+        }
+        delete result;
+    }
+    
+    return item;
+}
+
+bool ItemModel::getMovieActors(Movie * movie)
+{
+    vector<string> actors;
+    string actor;
+    QueryResult * result = 0;
+    stringstream stream(stringstream::out);
+    bool success = false;
+    
+    if (movie != 0) {
+        stream << "SELECT name || ' ' || last_name AS actor FROM Item "
+                  "JOIN Movie_Data ON Item.movie_id = Movie_Data.id "
+                  "JOIN Movie_Actor ON Movie_Data.id = Movie_Actor.movie_id "
+                  "JOIN Person ON Movie_Actor.actor_id = Person.id "
+                  "WHERE Item.id = " << movie->getId() << " "
+                  "ORDER BY actor ASC;";
+                  
+        result = dbCon.query(stream.str());
+        if (result != 0) {
+            while (result->next()) {
+                actor = result->value(0).toString().toAscii().data();
+                actors.push_back(actor);
+            }
+            movie->setMainActors(actors);
             delete result;
             success = true;
         }

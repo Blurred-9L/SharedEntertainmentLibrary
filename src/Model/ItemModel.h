@@ -4,6 +4,7 @@
 class DBConnection;
 class EntertainmentItem;
 class Book;
+class Movie;
 class MusicAlbum;
 class Videogame;
 
@@ -27,6 +28,10 @@ public:
     virtual Book * getBookItem(unsigned long long id);
     ///
     virtual bool getBookAuthors(Book * book);
+    ///
+    virtual Movie * getMovieItem(unsigned long long id);
+    ///
+    virtual bool getMovieActors(Movie * movie);
     ///
     virtual MusicAlbum * getMusicItem(unsigned long long id);
     ///
