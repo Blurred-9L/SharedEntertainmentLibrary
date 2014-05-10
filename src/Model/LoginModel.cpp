@@ -16,12 +16,12 @@ LoginModel::~LoginModel()
 {
 }
 
-long long LoginModel::tryLogin(const string & username, const string & password) const
+unsigned long long LoginModel::tryLogin(const string & username, const string & password) const
 {
     stringstream stream(stringstream::out);
     string dbUsername, dbPassword;
     QueryResult * result;
-    long long userId = 0;
+    unsigned long long userId = 0;
     
     stream << "SELECT id, username, password FROM Member "
               "WHERE username=\'" << username << "\' AND "
@@ -33,7 +33,7 @@ long long LoginModel::tryLogin(const string & username, const string & password)
             dbUsername = result->value(1).toString().toAscii().data();
             dbPassword = result->value(2).toString().toAscii().data();
             if ((dbUsername == username) && (dbPassword == password)) {
-                userId = result->value(0).toLongLong();
+                userId = result->value(0).toULongLong();
             }
         }
         delete result;

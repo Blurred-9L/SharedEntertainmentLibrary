@@ -87,6 +87,9 @@ string Error::getErrorString(unsigned errorNo)
     case ERROR_QUERY_FAIL:
         errorString = "Error Code 19: The query could not be completed.";
         break;
+    case ERROR_ITEM_ID_FAIL:
+        errorString = "Error Code 20: The item's id was not found inside the database.";
+        break;
     default:
         break;
     }

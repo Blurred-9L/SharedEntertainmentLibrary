@@ -9,7 +9,7 @@ int main(int argc, char * argv[])
 {
     SELController controller;
     QApplication app(argc, argv);
-    SELMainWindow window;
+    SELMainWindow window(controller);
     SELLoginDialog loginDialog(controller);
     
     /**

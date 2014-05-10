@@ -16,7 +16,7 @@ public:
     ///
     virtual ~LoginModel();
     ///
-    long long tryLogin(const string & username, const string & password) const;
+    unsigned long long tryLogin(const string & username, const string & password) const;
 };
 
 #endif /// Not LOGIN_MODEL_H

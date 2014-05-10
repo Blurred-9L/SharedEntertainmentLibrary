@@ -1,6 +1,8 @@
 #include "QueryResult.h"
+#include "DBConnection.h"
 
 #include <QtSql/QSqlQuery>
+#include <QtSql/QSqlDriver>
 
 /**
  *  @details
@@ -58,6 +60,26 @@ bool QueryResult::previous() const
 bool QueryResult::seek(int index)
 {
     return queryResult->seek(index);
+}
+
+/**
+ *  @details
+ */
+int QueryResult::size() const
+{
+    int numRows;
+    int currentRecord;
+    
+    if (DBConnection::hasFeature(QSqlDriver::QuerySize)) {
+        numRows = queryResult->size();
+    } else {
+        currentRecord = queryResult->at();
+        queryResult->last();
+        numRows = queryResult->at() + 1;
+        queryResult->seek(currentRecord);
+    }
+    
+    return numRows;
 }
 
 /**

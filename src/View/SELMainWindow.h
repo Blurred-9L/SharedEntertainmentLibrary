@@ -4,6 +4,7 @@
 #include <QtGui/QMainWindow>
 
 class SELMainWidget;
+class SELController;
 
 /**
  *  @class  SELMainWindow
@@ -13,11 +14,13 @@ Q_OBJECT
 
 private:
     ///
+    SELController & controller;
+    ///
     SELMainWidget * mainWidget;
 
 public:
     ///
-    SELMainWindow();
+    SELMainWindow(SELController & controller);
     ///
     virtual ~SELMainWindow();
 };

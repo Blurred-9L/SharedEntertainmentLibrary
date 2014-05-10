@@ -2,6 +2,7 @@
 #define DB_CONNECTION_H
 
 #include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlDriver>
 
 #include <string>
 using std::string;
@@ -28,11 +29,15 @@ public:
     virtual QueryResult * query(const string & queryString) const;
     ///
     virtual bool nonQuery(const string & queryString) const;
+    ///
+    
     
     ///
     static DBConnection & getInstance();
     ///
     static void deleteInstance();
+    ///
+    static bool hasFeature(QSqlDriver::DriverFeature feature);
 };
 
 #endif /// Not DB_CONNECTION_H

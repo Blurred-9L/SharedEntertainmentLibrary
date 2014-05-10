@@ -3,6 +3,7 @@
 #include "../Model/Error.h"
 
 #include <QtSql/QSqlQuery>
+#include <QtSql/QSqlDriver>
 
 ///
 const char * _DB_DRIVER_NAME = "QPSQL";
@@ -120,6 +121,17 @@ void DBConnection::deleteInstance()
         delete dbCon;
         dbCon = 0;
     }
+}
+
+/**
+ *  @details
+ */
+bool DBConnection::hasFeature(QSqlDriver::DriverFeature feature)
+{
+    if (dbCon == 0) {
+        getInstance();
+    }
+    return dbCon->db.driver()->hasFeature(feature);
 }
 
 /**

@@ -71,7 +71,7 @@ SELLoginDialog::~SELLoginDialog()
 
 void SELLoginDialog::validateInput()
 {
-    QRegExp usernameRegex("[a-zA-Z_$&!][a-zA-Z_0-9$&!]{5,23}");
+    QRegExp usernameRegex("[a-zA-Z_0-9$&!]{6,24}");
     QRegExp passwordRegex("[a-zA-Z_\\-0-9!#$%&*+,.]{8,18}");
     QRegExpValidator usernameValidator(usernameRegex);
     QRegExpValidator passwordValidator(passwordRegex);

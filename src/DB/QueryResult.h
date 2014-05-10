@@ -29,6 +29,8 @@ public:
     ///
     bool seek(int index);
     ///
+    int size() const;
+    ///
     QVariant value(int index) const;
 };
 

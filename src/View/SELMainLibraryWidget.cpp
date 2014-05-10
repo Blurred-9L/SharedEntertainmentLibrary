@@ -4,6 +4,7 @@
 #include "../Model/MusicAlbum.h"
 #include "../Model/Videogame.h"
 #include "../Model/Error.h"
+#include "../Controller/SELController.h"
 
 #include <QtGui/QListWidget>
 #include <QtGui/QListWidgetItem>
@@ -15,9 +16,12 @@
 ///
 const unsigned SELMainLibraryWidget::ITEMS_PER_PAGE = 20;
 
-SELMainLibraryWidget::SELMainLibraryWidget(QWidget * parent) :
-    QWidget(parent), itemIds(0)
+SELMainLibraryWidget::SELMainLibraryWidget(SELController & controller, QWidget * parent) :
+    QWidget(parent), controller(controller), itemIds(0)
 {
+    EntertainmentItem * items;
+    int numItems;
+    
     QHBoxLayout * mainLayout = new QHBoxLayout(this);
     infoLayout = new QVBoxLayout();
     QVBoxLayout * listLayout = new QVBoxLayout();
@@ -65,6 +69,10 @@ SELMainLibraryWidget::SELMainLibraryWidget(QWidget * parent) :
     /// Item on list selected -> updateInfoLabels
     connect(libraryListWidget, SIGNAL(itemClicked(QListWidgetItem *)),
             this, SLOT(emitIdGetData(QListWidgetItem *)));
+            
+    /// Loads first page of items.
+    items = controller.retrieveLibraryPage(1, numItems);
+    updateItemPage(items, (unsigned)numItems);
 }
 
 SELMainLibraryWidget::~SELMainLibraryWidget()
@@ -99,6 +107,7 @@ void SELMainLibraryWidget::updateItemInfo(EntertainmentItem & item,
         bookItem = dynamic_cast<Book *>(&item);
         if (bookItem != 0) {
             /// Write book data
+            replaceLabelText("ISBN:", currentIndex++);
             replaceLabelText(bookItem->getIsbn().c_str(), currentIndex++);
             replaceLabelText("Authors:", currentIndex++);
             size = bookItem->getAuthors().size();
@@ -154,7 +163,7 @@ void SELMainLibraryWidget::updateItemInfo(EntertainmentItem & item,
     }
 }
 
-void SELMainLibraryWidget::updateItemPage(EntertainmentItem ** items,
+void SELMainLibraryWidget::updateItemPage(EntertainmentItem * items,
                                           unsigned numItems)
 {
     QList<QListWidgetItem *> listItems = libraryListWidget->findItems("*", Qt::MatchWildcard);
@@ -165,8 +174,8 @@ void SELMainLibraryWidget::updateItemPage(EntertainmentItem ** items,
         if (i >= size) {
             libraryListWidget->addItem(new QListWidgetItem());
         }
-        libraryListWidget->item(i)->setText(items[i]->getTitle().c_str());
-        itemIds[i] = items[i]->getId();
+        libraryListWidget->item(i)->setText(items[i].getTitle().c_str());
+        itemIds[i] = items[i].getId();
     }
     
     /// If less items were obtained than there previously were:
@@ -177,6 +186,7 @@ void SELMainLibraryWidget::updateItemPage(EntertainmentItem ** items,
         }
         i++;
     }
+    delete [] items;
 }
 
 /////////////
@@ -185,6 +195,8 @@ void SELMainLibraryWidget::updateItemPage(EntertainmentItem ** items,
 
 void SELMainLibraryWidget::updatePageIndexNext()
 {
+    EntertainmentItem * items = 0;
+    int numItems;
     int pageToGet;
     bool ok;
     
@@ -192,8 +204,11 @@ void SELMainLibraryWidget::updatePageIndexNext()
     
     if (ok) {
         pageToGet++;
-        emit getMainLibraryPage(pageToGet);
-        currentPageLabel->setNum(pageToGet);
+        items = controller.retrieveLibraryPage(pageToGet, numItems);
+        if ((items != 0) && (numItems > 0)) {
+            currentPageLabel->setNum(pageToGet);
+            updateItemPage(items, (unsigned)numItems);
+        }
     } else {
         Error::raiseError(Error::ERROR_NO_SUCH_PAGE_MLIB);
     }
@@ -201,6 +216,8 @@ void SELMainLibraryWidget::updatePageIndexNext()
 
 void SELMainLibraryWidget::updatePageIndexPrevious()
 {
+    EntertainmentItem * items = 0;
+    int numItems;
     int pageToGet;
     bool ok;
     
@@ -209,8 +226,11 @@ void SELMainLibraryWidget::updatePageIndexPrevious()
     if (ok) {
         pageToGet--;
         if (pageToGet > 0) {
-            emit getMainLibraryPage(pageToGet);
-            currentPageLabel->setNum(pageToGet);
+            items = controller.retrieveLibraryPage(pageToGet, numItems);
+            if ((items != 0) && (numItems > 0)) {
+                currentPageLabel->setNum(pageToGet);
+                updateItemPage(items, (unsigned)numItems);
+            }
         }
     } else {
         Error::raiseError(Error::ERROR_NO_SUCH_PAGE_MLIB);
@@ -219,10 +239,13 @@ void SELMainLibraryWidget::updatePageIndexPrevious()
 
 void SELMainLibraryWidget::emitIdGetData(QListWidgetItem * item)
 {
+    EntertainmentItem * eItem;
     unsigned long long id = findId(item);
+    unsigned long long itemType;
     
     if (id > 0) {
-        emit getItemData(id);
+        eItem = controller.retrieveItem(id, itemType);
+        updateItemInfo(*eItem, itemType);
     } else {
         Error::raiseError(Error::ERROR_ITEM_ID_NOT_FOUND);
     }

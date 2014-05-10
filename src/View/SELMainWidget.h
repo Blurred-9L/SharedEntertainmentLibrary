@@ -3,6 +3,7 @@
 
 #include <QtGui/QTabWidget>
 
+class SELController;
 class SELMainLibraryWidget;
 class SELUserLibraryWidget;
 class SELUserAccountWidget;
@@ -14,6 +15,8 @@ class SELUserLoansWidget;
 class SELMainWidget : public QTabWidget {
 private:
     ///
+    SELController & controller;
+    ///
     SELMainLibraryWidget * mainLibraryWidget;
     ///
     SELUserLibraryWidget * userLibraryWidget;
@@ -24,7 +27,7 @@ private:
     
 public:
     ///
-    SELMainWidget(QWidget * parent = 0);
+    SELMainWidget(SELController & controller, QWidget * parent = 0);
     ///
     virtual ~SELMainWidget();
 };
