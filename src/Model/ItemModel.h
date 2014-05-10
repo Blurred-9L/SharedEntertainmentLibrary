@@ -4,6 +4,8 @@
 class DBConnection;
 class EntertainmentItem;
 class Book;
+class MusicAlbum;
+class Videogame;
 
 class ItemModel {
 private:
@@ -25,6 +27,10 @@ public:
     virtual Book * getBookItem(unsigned long long id);
     ///
     virtual bool getBookAuthors(Book * book);
+    ///
+    virtual MusicAlbum * getMusicItem(unsigned long long id);
+    ///
+    virtual Videogame * getVideogameItem(unsigned long long id);
 };
 
 #endif /// Not ITEM_MODEL_H

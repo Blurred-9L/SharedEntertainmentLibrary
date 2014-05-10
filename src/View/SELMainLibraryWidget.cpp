@@ -139,9 +139,11 @@ void SELMainLibraryWidget::updateItemInfo(EntertainmentItem & item,
             /// Write music data
             replaceLabelText("Artist:", currentIndex++);
             replaceLabelText(musicItem->getArtist().c_str(), currentIndex++);
-            replaceLabelText("Num tracks", currentIndex++);
+            replaceLabelText("Num tracks:", currentIndex++);
             replaceLabelText(QString::number(musicItem->getNTracks()), currentIndex++);
-            }
+            replaceLabelText("Total duration:", currentIndex++);
+            replaceLabelText(musicItem->getDuration().toString("hh:mm:ss"), currentIndex++);
+        }
         break;
     case 4:
         videogameItem = dynamic_cast<Videogame *>(&item);

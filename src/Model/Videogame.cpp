@@ -41,12 +41,24 @@ string Videogame::getRatingString(unsigned long long esrbRating)
 {
     string ratingString = "";
     
+    switch (esrbRating) {
+    case RATING_EVERYONE:
+        ratingString = "Everyone";
+        break;
+    }
+    
     return ratingString;
 }
 
 string Videogame::getPlatformString(unsigned long long platform)
 {
     string platformString = "";
+    
+    switch (platform) {
+    case GAME_PLATFORM_3DS:
+        platformString = "Nintendo 3DS";
+        break;
+    }
     
     return platformString;
 }

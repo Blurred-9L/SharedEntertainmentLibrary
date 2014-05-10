@@ -18,14 +18,16 @@ public:
      *  @enum   ESRBRating
      */
     enum ESRBRating {
-        RATING_INVALID = 0
+        RATING_INVALID = 0,
+        RATING_EVERYONE = 1
     };
     
     /**
      *  @enum   GamePlatform
      */
     enum GamePlatform {
-        GAME_PLATFORM_INVALID = 0
+        GAME_PLATFORM_INVALID = 0,
+        GAME_PLATFORM_3DS = 1,
     };
     
     ///

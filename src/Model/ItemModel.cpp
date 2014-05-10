@@ -1,6 +1,8 @@
 #include "ItemModel.h"
 #include "EntertainmentItem.h"
 #include "Book.h"
+#include "MusicAlbum.h"
+#include "Videogame.h"
 #include "Error.h"
 #include "../DB/DBConnection.h"
 #include "../DB/QueryResult.h"
@@ -74,8 +76,10 @@ EntertainmentItem * ItemModel::getItem(unsigned long long id, unsigned long long
     case 2:
         break;
     case 3:
+        item = getMusicItem(id);
         break;
     case 4:
+        item = getVideogameItem(id);
         break;
     default:
         Error::raiseError(Error::ERROR_ITEM_ID_FAIL);
@@ -163,5 +167,69 @@ bool ItemModel::getBookAuthors(Book * book)
     }
     
     return success;
+}
+
+MusicAlbum * ItemModel::getMusicItem(unsigned long long id)
+{
+    MusicAlbum * item = 0;
+    QueryResult * result = 0;
+    stringstream stream(stringstream::out);
+    
+    stream << "SELECT Item.id, title, Genre.genre, Publisher.publisher, "
+              "year, name AS artist, num_tracks, duration FROM Item "
+              "JOIN Genre ON Item.genre = Genre.id "
+              "JOIN Publisher ON Item.publisher = Publisher.id "
+              "JOIN Music_Data ON Item.music_id = Music_Data.id "
+              "JOIN Artist ON Music_Data.artist_id = Artist.id "
+              "WHERE Item.id = " << id << ";";
+              
+    result = dbCon.query(stream.str());
+    if (result != 0) {
+        if (result->next()) {
+            item = new MusicAlbum();
+            item->setId(result->value(0).toULongLong());
+            item->setTitle(result->value(1).toString().toAscii().data());
+            item->setGenre(result->value(2).toString().toAscii().data());
+            item->setPublisher(result->value(3).toString().toAscii().data());
+            item->setYear(result->value(4).toUInt());
+            item->setArtist(result->value(5).toString().toAscii().data());
+            item->setNTracks(result->value(6).toUInt());
+            item->setDuration(result->value(7).toTime());
+        }
+        delete result;
+    }
+    
+    return item;
+}
+
+Videogame * ItemModel::getVideogameItem(unsigned long long id)
+{
+    Videogame * item = 0;
+    QueryResult * result = 0;
+    stringstream stream(stringstream::out);
+    
+    stream << "SELECT Item.id, title, Genre.genre, Publisher.publisher, "
+              "year, esrb_rating, Videogame_Data.platform_id FROM Item "
+              "JOIN Genre ON Item.genre = Genre.id "
+              "JOIN Publisher ON Item.publisher = Publisher.id "
+              "JOIN Videogame_Data ON Item.videogame_id = Videogame_Data.id "
+              "WHERE Item.id = " << id << ";";
+              
+    result = dbCon.query(stream.str());
+    if (result != 0) {
+        if (result->next()) {
+            item = new Videogame();
+            item->setId(result->value(0).toULongLong());
+            item->setTitle(result->value(1).toString().toAscii().data());
+            item->setGenre(result->value(2).toString().toAscii().data());
+            item->setPublisher(result->value(3).toString().toAscii().data());
+            item->setYear(result->value(4).toUInt());
+            item->setEsrbRating(result->value(5).toULongLong());
+            item->setPlatform(result->value(6).toULongLong());
+        }
+        delete result;
+    }
+    
+    return item;
 }
 
