@@ -13,6 +13,8 @@ class SELUserLoansWidget;
  *  @class  SELMainWidget
  */
 class SELMainWidget : public QTabWidget {
+Q_OBJECT
+
 private:
     ///
     SELController & controller;
@@ -30,6 +32,10 @@ public:
     SELMainWidget(SELController & controller, QWidget * parent = 0);
     ///
     virtual ~SELMainWidget();
+    
+signals:
+    ///
+    void notifyIdAvailable();
 };
 
 #endif /// Not SEL_MAIN_WIDGET_H

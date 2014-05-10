@@ -3,6 +3,7 @@
 
 class DBConnection;
 class EntertainmentItem;
+class OwnedItem;
 class Book;
 class Movie;
 class MusicAlbum;
@@ -20,6 +21,8 @@ public:
     virtual ~ItemModel();
     ///
     virtual EntertainmentItem * getItemsOnPage(int pageNumber, int & numItems);
+    ///
+    virtual OwnedItem * getUserItemsOnPage(unsigned long long userId, int pageNumber, int & numItems);
     ///
     virtual EntertainmentItem * getItem(unsigned long long id, unsigned long long & itemType);
     ///

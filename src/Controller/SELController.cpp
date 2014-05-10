@@ -58,3 +58,12 @@ EntertainmentItem * SELController::retrieveItem(unsigned long long id, unsigned 
     return item;
 }
 
+OwnedItem * SELController::retrieveUserLibraryPage(int pageToGet, int & numItems)
+{
+    OwnedItem * items = 0;
+    
+    items = itemModel->getUserItemsOnPage(activeUserId, pageToGet, numItems);
+    
+    return items;
+}
+

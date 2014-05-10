@@ -9,6 +9,8 @@ SELMainWindow::SELMainWindow(SELController & controller) :
     this->setCentralWidget(mainWidget);
     this->setWindowTitle("Shared Entertainment Library");
     this->resize(650, 400);
+    
+    connect(this, SIGNAL(idAvailable()), mainWidget, SIGNAL(notifyIdAvailable()));
 }
 
 SELMainWindow::~SELMainWindow()

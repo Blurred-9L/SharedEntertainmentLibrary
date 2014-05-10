@@ -11,7 +11,9 @@ class QPushButton;
 class QListWidgetItem;
 class QString;
 
+class SELController;
 class EntertainmentItem;
+class OwnedItem;
 
 /**
  *  @class  SELUserLibraryWidget
@@ -20,6 +22,8 @@ class SELUserLibraryWidget : public QWidget {
 Q_OBJECT
 
 private:
+    ///
+    SELController & controller;
     ///
     QVBoxLayout * infoLayout;
     ///
@@ -47,7 +51,7 @@ public:
     static const unsigned ITEMS_PER_PAGE;
 
     ///
-    SELUserLibraryWidget(QWidget * parent = 0);
+    SELUserLibraryWidget(SELController & controller, QWidget * parent = 0);
     ///
     virtual ~SELUserLibraryWidget();
     
@@ -55,7 +59,9 @@ public slots:
     ///
     void updateItemInfo(EntertainmentItem & item, unsigned long long type);
     ///
-    void updateItemPage(EntertainmentItem ** items, unsigned numItems);
+    void updateItemPage(OwnedItem * items, unsigned numItems);
+    ///
+    void loadFirstPage();
     
 private slots:
     ///

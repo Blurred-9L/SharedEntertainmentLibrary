@@ -242,9 +242,10 @@ void SELMainLibraryWidget::updatePageIndexPrevious()
 void SELMainLibraryWidget::emitIdGetData(QListWidgetItem * item)
 {
     EntertainmentItem * eItem;
-    unsigned long long id = findId(item);
+    unsigned long long id;
     unsigned long long itemType;
     
+    id = findId(item);
     if (id > 0) {
         eItem = controller.retrieveItem(id, itemType);
         if (eItem != 0) {

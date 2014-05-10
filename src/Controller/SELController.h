@@ -9,6 +9,7 @@ using std::string;
 class LoginModel;
 class ItemModel;
 class EntertainmentItem;
+class OwnedItem;
 
 class SELController : public QObject {
 Q_OBJECT
@@ -34,6 +35,8 @@ public slots:
     EntertainmentItem * retrieveLibraryPage(int pageToGet, int & numItems);
     ///
     EntertainmentItem * retrieveItem(unsigned long long id, unsigned long long & type);
+    ///
+    OwnedItem * retrieveUserLibraryPage(int pageToGet, int & numitems);
 };
 
 #endif /// Not SEL_CONTROLLER_H

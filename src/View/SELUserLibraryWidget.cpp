@@ -5,6 +5,7 @@
 #include "../Model/Videogame.h"
 #include "../Model/OwnedItem.h"
 #include "../Model/Error.h"
+#include "../Controller/SELController.h"
 
 #include <QtGui/QListWidget>
 #include <QtGui/QListWidgetItem>
@@ -16,9 +17,9 @@
 ///
 const unsigned SELUserLibraryWidget::ITEMS_PER_PAGE = 20;
 
-SELUserLibraryWidget::SELUserLibraryWidget(QWidget * parent) :
-    QWidget(parent), itemIds(0)
-{
+SELUserLibraryWidget::SELUserLibraryWidget(SELController & controller, QWidget * parent) :
+    QWidget(parent), controller(controller), itemIds(0)
+{    
     QHBoxLayout * mainLayout = new QHBoxLayout(this);
     QVBoxLayout * infoWrapLayout = new QVBoxLayout();
     infoLayout = new QVBoxLayout();
@@ -75,6 +76,7 @@ SELUserLibraryWidget::SELUserLibraryWidget(QWidget * parent) :
     /// Change loan policy button pressed, shows loan policy selection dialog.
     connect(loanPolicyButton, SIGNAL(clicked()),
             this, SLOT(emitIdChangePolicy()));
+            
 }
 
 SELUserLibraryWidget::~SELUserLibraryWidget()
@@ -105,7 +107,7 @@ void SELUserLibraryWidget::updateItemInfo(EntertainmentItem & item,
     
     /// Check type to write extra data.
     switch (type) {
-    case 1:
+    case OwnedItem::TYPE_BOOK:
         bookItem = dynamic_cast<Book *>(&item);
         if (bookItem != 0) {
             /// Write book data
@@ -119,7 +121,7 @@ void SELUserLibraryWidget::updateItemInfo(EntertainmentItem & item,
             replaceLabelText(QString::number(bookItem->getNPages()), currentIndex++);
         }
         break;
-    case 2:
+    case OwnedItem::TYPE_MOVIE:
         movieItem = dynamic_cast<Movie *>(&item);
         if (movieItem != 0) {
             /// Write movie data
@@ -134,7 +136,7 @@ void SELUserLibraryWidget::updateItemInfo(EntertainmentItem & item,
             replaceLabelText(Movie::getRatingString(movieItem->getRating()).c_str(), currentIndex++);
         }
         break;
-    case 3:
+    case OwnedItem::TYPE_MUSIC:
         musicItem = dynamic_cast<MusicAlbum *>(&item);
         if (musicItem != 0) {
             /// Write music data
@@ -144,7 +146,7 @@ void SELUserLibraryWidget::updateItemInfo(EntertainmentItem & item,
             replaceLabelText(QString::number(musicItem->getNTracks()), currentIndex++);
             }
         break;
-    case 4:
+    case OwnedItem::TYPE_VIDEOGAME:
         videogameItem = dynamic_cast<Videogame *>(&item);
         if (videogameItem != 0) {
             replaceLabelText("Rating:", currentIndex++);
@@ -164,7 +166,7 @@ void SELUserLibraryWidget::updateItemInfo(EntertainmentItem & item,
     }
 }
 
-void SELUserLibraryWidget::updateItemPage(EntertainmentItem ** items,
+void SELUserLibraryWidget::updateItemPage(OwnedItem * items,
                                           unsigned numItems)
 {
     QList<QListWidgetItem *> listItems = libraryListWidget->findItems("*", Qt::MatchWildcard);
@@ -175,8 +177,8 @@ void SELUserLibraryWidget::updateItemPage(EntertainmentItem ** items,
         if (i >= size) {
             libraryListWidget->addItem(new QListWidgetItem());
         }
-        libraryListWidget->item(i)->setText(items[i]->getTitle().c_str());
-        itemIds[i] = items[i]->getId();
+        libraryListWidget->item(i)->setText(items[i].getTitle().c_str());
+        itemIds[i] = items[i].getOwnedItemId();
     }
     
     /// If less items were obtained than there previously were:
@@ -187,6 +189,16 @@ void SELUserLibraryWidget::updateItemPage(EntertainmentItem ** items,
         }
         i++;
     }
+    delete [] items;
+}
+
+void SELUserLibraryWidget::loadFirstPage()
+{
+    OwnedItem * items = 0;
+    int numItems;
+    
+    items = controller.retrieveUserLibraryPage(1, numItems);
+    updateItemPage(items, (unsigned)numItems);
 }
 
 /////////////
@@ -195,6 +207,8 @@ void SELUserLibraryWidget::updateItemPage(EntertainmentItem ** items,
 
 void SELUserLibraryWidget::updatePageIndexNext()
 {
+    OwnedItem * items;
+    int numItems;
     int pageToGet;
     bool ok;
     
@@ -202,8 +216,11 @@ void SELUserLibraryWidget::updatePageIndexNext()
     
     if (ok) {
         pageToGet++;
-        emit getUserLibraryPage(pageToGet);
-        currentPageLabel->setNum(pageToGet);
+        items = controller.retrieveUserLibraryPage(pageToGet, numItems);
+        if ((items != 0) && (numItems > 0)) {
+            currentPageLabel->setNum(pageToGet);
+            updateItemPage(items, (unsigned)pageToGet);
+        }
     } else {
         Error::raiseError(Error::ERROR_NO_SUCH_PAGE_ULIB);
     }
@@ -211,6 +228,8 @@ void SELUserLibraryWidget::updatePageIndexNext()
 
 void SELUserLibraryWidget::updatePageIndexPrevious()
 {
+    OwnedItem * items;
+    int numItems;
     int pageToGet;
     bool ok;
     
@@ -219,8 +238,11 @@ void SELUserLibraryWidget::updatePageIndexPrevious()
     if (ok) {
         pageToGet--;
         if (pageToGet > 0) {
-            emit getUserLibraryPage(pageToGet);
-            currentPageLabel->setNum(pageToGet);
+            items = controller.retrieveUserLibraryPage(pageToGet, numItems);
+            if ((items != 0) && (numItems > 0)) {
+                currentPageLabel->setNum(pageToGet);
+                updateItemPage(items, (unsigned)pageToGet);
+            }
         }
     } else {
         Error::raiseError(Error::ERROR_NO_SUCH_PAGE_ULIB);

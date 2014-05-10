@@ -1,5 +1,6 @@
 #include "ItemModel.h"
 #include "EntertainmentItem.h"
+#include "OwnedItem.h"
 #include "Book.h"
 #include "Movie.h"
 #include "MusicAlbum.h"
@@ -36,8 +37,10 @@ EntertainmentItem * ItemModel::getItemsOnPage(int pageNumber, int & numItems)
     int offset = (pageNumber - 1) * 20;
     int index;
     
-    stream << "SELECT Item.id, title, Genre.genre, publisher, year FROM Item "
+    stream << "SELECT Item.id, title, Genre.genre, Publisher.publisher, "
+              "year FROM Item "
               "JOIN Genre on Item.genre = Genre.id "
+              "JOIN Publisher on Item.publisher = Publisher.id "
               "ORDER BY id ASC "
               "LIMIT 20 OFFSET " << offset << ";";
               
@@ -65,22 +68,67 @@ EntertainmentItem * ItemModel::getItemsOnPage(int pageNumber, int & numItems)
     return items;
 }
 
+OwnedItem * ItemModel::getUserItemsOnPage(unsigned long long userId,
+                                          int pageNumber, int & numItems)
+{
+    OwnedItem * items = 0;
+    OwnedItem * item = 0;
+    QueryResult * result = 0;
+    stringstream stream(stringstream::out);
+    int offset = (pageNumber - 1) * 20;
+    int index;
+    
+    stream << "SELECT Item.id as item_id, Owned_Item.id as owned_id, "
+              "title, Genre.genre, Publisher.publisher, year, type FROM Item "
+              "JOIN Genre on Item.genre = Genre.id "
+              "JOIN Publisher on Item.publisher = Publisher.id "
+              "JOIN Owned_Item on Item.id = Owned_Item.item_id "
+              "WHERE Owned_Item.member_id = " << userId << " "
+              "ORDER BY Item.id ASC "
+              "LIMIT 20 OFFSET " << offset << ";";
+              
+    result = dbCon.query(stream.str());
+    if (result != 0) {
+        numItems = result->size();
+        if (numItems > 0) {
+            items = new (std::nothrow) OwnedItem[numItems];
+        }
+        if (items != 0) {
+            index = 0;
+            while (result->next()) {
+                item = &items[index];
+                item->setId(result->value(0).toULongLong());
+                item->setOwnedItemId(result->value(1).toULongLong());
+                item->setTitle(result->value(2).toString().toAscii().data());
+                item->setGenre(result->value(3).toString().toAscii().data());
+                item->setPublisher(result->value(4).toString().toAscii().data());
+                item->setYear(result->value(5).toUInt());
+                item->setItemType(result->value(6).toULongLong());
+                index++;
+            }
+        }
+        delete result;
+    }
+    
+    return items;
+}
+
 EntertainmentItem * ItemModel::getItem(unsigned long long id, unsigned long long & itemType)
 {
     EntertainmentItem * item = 0;
     
     itemType = getItemType(id);
     switch (itemType) {
-    case 1:
+    case OwnedItem::TYPE_BOOK:
         item = getBookItem(id);
         break;
-    case 2:
+    case OwnedItem::TYPE_MOVIE:
         item = getMovieItem(id);
         break;
-    case 3:
+    case OwnedItem::TYPE_MUSIC:
         item = getMusicItem(id);
         break;
-    case 4:
+    case OwnedItem::TYPE_VIDEOGAME:
         item = getVideogameItem(id);
         break;
     default:

@@ -23,6 +23,9 @@ public:
     SELMainWindow(SELController & controller);
     ///
     virtual ~SELMainWindow();
+    
+signals:
+    void idAvailable();
 };
 
 #endif /// Not SEL_MAIN_WINDOW_H

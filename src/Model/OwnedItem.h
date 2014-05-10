@@ -24,7 +24,11 @@ public:
      *  @enum   ItemType
      */
     enum ItemType {
-        TYPE_INVALID = 0
+        TYPE_INVALID = 0,
+        TYPE_BOOK,
+        TYPE_MOVIE,
+        TYPE_MUSIC,
+        TYPE_VIDEOGAME
     };
     
     /**

@@ -7,8 +7,8 @@
 
 int main(int argc, char * argv[])
 {
-    SELController controller;
     QApplication app(argc, argv);
+    SELController controller;
     SELMainWindow window(controller);
     SELLoginDialog loginDialog(controller);
     
@@ -25,6 +25,8 @@ int main(int argc, char * argv[])
     
     QObject::connect(&loginDialog, SIGNAL(loginSuccessful()),
                      &window, SLOT(show()));
+    QObject::connect(&loginDialog, SIGNAL(loginSuccessful()),
+                     &window, SIGNAL(idAvailable()));
     
     app.exec();
     
