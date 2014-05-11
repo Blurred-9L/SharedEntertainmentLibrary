@@ -45,6 +45,10 @@ private:
     void replaceLabelText(const QString & text, int index);
     ///
     unsigned long long findId(QListWidgetItem * item);
+    ///
+    void showPolicyChangeDialog(EntertainmentItem * item,
+                                unsigned long long ownedItemId,
+                                int policy);
     
 public:
     ///
@@ -71,7 +75,7 @@ private slots:
     ///
     void emitIdGetData(QListWidgetItem * item);
     ///
-    void emitIdChangePolicy();
+    void changePolicy();
     
 signals:
     ///

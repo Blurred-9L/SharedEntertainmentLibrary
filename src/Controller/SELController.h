@@ -39,6 +39,10 @@ public slots:
     OwnedItem * retrieveUserLibraryPage(int pageToGet, int & numItems);
     ///
     unsigned long long retrieveItemId(unsigned long long ownedItemId);
+    ///
+    unsigned long long retrieveItemPolicy(unsigned long long ownedItemId);
+    ///
+    bool changeItemPolicy(unsigned long long ownedItemId, int policy);
 };
 
 #endif /// Not SEL_CONTROLLER_H

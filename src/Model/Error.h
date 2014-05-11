@@ -39,7 +39,8 @@ public:
         ERROR_PASSWORD_SHORT,
         ERROR_LOGIN_FAIL,
         ERROR_QUERY_FAIL,
-        ERROR_ITEM_ID_FAIL
+        ERROR_ITEM_ID_FAIL,
+        ERROR_POLICY_CHANGE_FAIL
     };
     
     ///
