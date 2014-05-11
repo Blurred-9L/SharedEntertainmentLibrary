@@ -250,6 +250,7 @@ void SELMainLibraryWidget::emitIdGetData(QListWidgetItem * item)
         eItem = controller.retrieveItem(id, itemType);
         if (eItem != 0) {
             updateItemInfo(*eItem, itemType);
+            delete eItem;
         }
     } else {
         Error::raiseError(Error::ERROR_ITEM_ID_NOT_FOUND);

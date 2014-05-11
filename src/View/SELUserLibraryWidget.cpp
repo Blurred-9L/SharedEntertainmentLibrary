@@ -1,4 +1,5 @@
 #include "SELUserLibraryWidget.h"
+#include "SELItemPolicyDialog.h"
 #include "../Model/Book.h"
 #include "../Model/Movie.h"
 #include "../Model/MusicAlbum.h"
@@ -75,7 +76,7 @@ SELUserLibraryWidget::SELUserLibraryWidget(SELController & controller, QWidget *
             this, SLOT(emitIdGetData(QListWidgetItem *)));
     /// Change loan policy button pressed, shows loan policy selection dialog.
     connect(loanPolicyButton, SIGNAL(clicked()),
-            this, SLOT(emitIdChangePolicy()));
+            this, SLOT(changePolicy()));
             
 }
 
@@ -111,6 +112,7 @@ void SELUserLibraryWidget::updateItemInfo(EntertainmentItem & item,
         bookItem = dynamic_cast<Book *>(&item);
         if (bookItem != 0) {
             /// Write book data
+            replaceLabelText("ISBN:", currentIndex++);
             replaceLabelText(bookItem->getIsbn().c_str(), currentIndex++);
             replaceLabelText("Authors:", currentIndex++);
             size = bookItem->getAuthors().size();
@@ -144,7 +146,9 @@ void SELUserLibraryWidget::updateItemInfo(EntertainmentItem & item,
             replaceLabelText(musicItem->getArtist().c_str(), currentIndex++);
             replaceLabelText("Num tracks", currentIndex++);
             replaceLabelText(QString::number(musicItem->getNTracks()), currentIndex++);
-            }
+            replaceLabelText("Total duration:", currentIndex++);
+            replaceLabelText(musicItem->getDuration().toString("hh:mm:ss"), currentIndex++);
+        }
         break;
     case OwnedItem::TYPE_VIDEOGAME:
         videogameItem = dynamic_cast<Videogame *>(&item);
@@ -263,21 +267,29 @@ void SELUserLibraryWidget::emitIdGetData(QListWidgetItem * item)
         eItem = controller.retrieveItem(realItemId, itemType);
         if (eItem != 0) {
             updateItemInfo(*eItem, itemType);
+            delete eItem;
         }
     } else {
         Error::raiseError(Error::ERROR_ITEM_ID_NOT_FOUND);
     }
 }
 
-void SELUserLibraryWidget::emitIdChangePolicy()
+void SELUserLibraryWidget::changePolicy()
 {
     QList<QListWidgetItem *> selectedItems = libraryListWidget->selectedItems();
-    unsigned long long id;
+    EntertainmentItem * eItem = 0;
+    unsigned long long id, realItemId, itemType, itemPolicy;
     int size = selectedItems.size();
     
     if (size == 1) {
         id = findId(selectedItems[0]);
-        emit changeItemLoanPolicy(id);
+        realItemId = controller.retrieveItemId(id);
+        itemPolicy = controller.retrieveItemPolicy(id);
+        eItem = controller.retrieveItem(realItemId, itemType);
+        if (eItem != 0) {
+            showPolicyChangeDialog(eItem, id, itemPolicy);
+            delete eItem;
+        }
     } else if (size > 1) {
         Error::raiseError(Error::ERROR_ITEM_SELECTION_ERROR);
     } else {
@@ -317,6 +329,23 @@ void SELUserLibraryWidget::replaceLabelText(const QString & text, int index)
         infoLayout->addWidget(itemInfo[index]);
     } else {
         itemInfo[index]->setText(text);
+    }
+}
+
+void SELUserLibraryWidget::showPolicyChangeDialog(EntertainmentItem * item,
+                                                  unsigned long long ownedItemId,
+                                                  int policy)
+{
+    SELItemPolicyDialog dialog(item, ownedItemId, policy);
+    int newPolicy;
+    
+    newPolicy = dialog.exec();
+    if (newPolicy >= 0) {
+        if (newPolicy != policy) {
+            controller.changeItemPolicy(ownedItemId, newPolicy);
+        }
+    } else {
+        Error::raiseError(Error::ERROR_POLICY_CHANGE_FAIL);
     }
 }
 

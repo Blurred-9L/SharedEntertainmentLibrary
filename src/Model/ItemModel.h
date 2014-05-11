@@ -41,6 +41,10 @@ public:
     virtual Videogame * getVideogameItem(unsigned long long id);
     ///
     virtual unsigned long long getItemId(unsigned long long ownedItemId);
+    ///
+    virtual unsigned long long getItemPolicy(unsigned long long ownedItemId);
+    ///
+    virtual bool updateItemPolicy(unsigned long long ownedItemId, int policy);
 };
 
 #endif /// Not ITEM_MODEL_H

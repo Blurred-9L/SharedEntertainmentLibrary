@@ -370,3 +370,34 @@ unsigned long long ItemModel::getItemId(unsigned long long ownedItemId)
     return id;
 }
 
+unsigned long long ItemModel::getItemPolicy(unsigned long long ownedItemId)
+{
+    unsigned long long policy = 0;
+    QueryResult * result = 0;
+    stringstream stream(stringstream::out);
+    
+    stream << "SELECT policy FROM Owned_Item WHERE id = " << ownedItemId << ";";
+    result = dbCon.query(stream.str());
+    if (result != 0) {
+        if (result->next()) {
+            policy = result->value(0).toULongLong();
+        }
+        delete result;
+    }
+    
+    return policy;
+}
+
+bool ItemModel::updateItemPolicy(unsigned long long ownedItemId, int policy)
+{
+    bool success = false;
+    stringstream stream(stringstream::out);
+    
+    stream << "UPDATE Owned_Item SET policy = " << policy << " "
+              "WHERE id = " << ownedItemId << ";";
+    
+    success = dbCon.nonQuery(stream.str());
+    
+    return success;
+}
+

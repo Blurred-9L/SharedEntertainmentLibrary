@@ -76,3 +76,21 @@ unsigned long long SELController::retrieveItemId(unsigned long long ownedItemId)
     return id;
 }
 
+unsigned long long SELController::retrieveItemPolicy(unsigned long long ownedItemId)
+{
+    unsigned long long policy;
+    
+    policy = itemModel->getItemPolicy(ownedItemId);
+    
+    return policy;
+}
+
+bool SELController::changeItemPolicy(unsigned long long ownedItemId, int policy)
+{
+    bool success = false;
+    
+    success = itemModel->updateItemPolicy(ownedItemId, policy);
+    
+    return success;
+}
+

@@ -90,6 +90,9 @@ string Error::getErrorString(unsigned errorNo)
     case ERROR_ITEM_ID_FAIL:
         errorString = "Error Code 20: The item's id was not found inside the database.";
         break;
+    case ERROR_POLICY_CHANGE_FAIL:
+        errorString = "Error Code 21: The item's loan policy could not be changed.";
+        break;
     default:
         break;
     }
