@@ -36,7 +36,9 @@ public slots:
     ///
     EntertainmentItem * retrieveItem(unsigned long long id, unsigned long long & type);
     ///
-    OwnedItem * retrieveUserLibraryPage(int pageToGet, int & numitems);
+    OwnedItem * retrieveUserLibraryPage(int pageToGet, int & numItems);
+    ///
+    unsigned long long retrieveItemId(unsigned long long ownedItemId);
 };
 
 #endif /// Not SEL_CONTROLLER_H

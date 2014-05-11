@@ -349,3 +349,24 @@ Videogame * ItemModel::getVideogameItem(unsigned long long id)
     return item;
 }
 
+unsigned long long ItemModel::getItemId(unsigned long long ownedItemId)
+{
+    unsigned long long id = 0;
+    QueryResult * result = 0;
+    stringstream stream(stringstream::out);
+    
+    stream << "SELECT Item.id FROM Item "
+              "JOIN Owned_Item ON Owned_Item.item_id = Item.id "
+              "WHERE Owned_Item.id = " << ownedItemId << ";";
+              
+    result = dbCon.query(stream.str());
+    if (result != 0) {
+        if (result->next()) {
+            id = result->value(0).toULongLong();
+        }
+        delete result;
+    }
+    
+    return id;
+}
+

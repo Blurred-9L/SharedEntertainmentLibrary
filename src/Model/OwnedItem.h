@@ -35,7 +35,10 @@ public:
      *  @enum   ItemPolicy
      */
     enum ItemPolicy {
-        POLICY_FREE = 1
+        POLICY_INVALID = 0,
+        POLICY_FREE,
+        POLICY_USER,
+        POLICY_NO_LOAN
     };
     
     ///

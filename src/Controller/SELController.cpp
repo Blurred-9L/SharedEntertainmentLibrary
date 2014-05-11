@@ -67,3 +67,12 @@ OwnedItem * SELController::retrieveUserLibraryPage(int pageToGet, int & numItems
     return items;
 }
 
+unsigned long long SELController::retrieveItemId(unsigned long long ownedItemId)
+{
+    unsigned long long id = 0;
+    
+    id = itemModel->getItemId(ownedItemId);
+    
+    return id;
+}
+

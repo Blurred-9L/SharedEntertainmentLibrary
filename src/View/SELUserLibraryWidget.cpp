@@ -198,7 +198,9 @@ void SELUserLibraryWidget::loadFirstPage()
     int numItems;
     
     items = controller.retrieveUserLibraryPage(1, numItems);
-    updateItemPage(items, (unsigned)numItems);
+    if (items != 0) {
+        updateItemPage(items, (unsigned)numItems);
+    }
 }
 
 /////////////
@@ -251,10 +253,17 @@ void SELUserLibraryWidget::updatePageIndexPrevious()
 
 void SELUserLibraryWidget::emitIdGetData(QListWidgetItem * item)
 {
+    EntertainmentItem * eItem = 0;
+    unsigned long long itemType;
     unsigned long long id = findId(item);
+    unsigned long long realItemId;
     
     if (id > 0) {
-        emit getItemData(id);
+        realItemId = controller.retrieveItemId(id);
+        eItem = controller.retrieveItem(realItemId, itemType);
+        if (eItem != 0) {
+            updateItemInfo(*eItem, itemType);
+        }
     } else {
         Error::raiseError(Error::ERROR_ITEM_ID_NOT_FOUND);
     }

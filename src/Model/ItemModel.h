@@ -39,6 +39,8 @@ public:
     virtual MusicAlbum * getMusicItem(unsigned long long id);
     ///
     virtual Videogame * getVideogameItem(unsigned long long id);
+    ///
+    virtual unsigned long long getItemId(unsigned long long ownedItemId);
 };
 
 #endif /// Not ITEM_MODEL_H
