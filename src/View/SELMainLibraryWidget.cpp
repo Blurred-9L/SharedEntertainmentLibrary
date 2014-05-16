@@ -170,7 +170,7 @@ void SELMainLibraryWidget::updateItemPage(EntertainmentItem * items,
 {
     QList<QListWidgetItem *> listItems = libraryListWidget->findItems("*", Qt::MatchWildcard);
     QListWidgetItem * removedItem = 0;
-    unsigned i, size = listItems.size();
+    unsigned i, size = listItems.size(), indexOffset;
     
     for (i = 0; i < numItems; i++) {
         if (i >= size) {
@@ -181,13 +181,18 @@ void SELMainLibraryWidget::updateItemPage(EntertainmentItem * items,
     }
     
     /// If less items were obtained than there previously were:
+    indexOffset = 0;
     while (i < size) {
-        removedItem = libraryListWidget->takeItem(i);
+        removedItem = libraryListWidget->takeItem(i - indexOffset);
         if (removedItem != 0) {
             delete removedItem;
+            removedItem = 0;
         }
+        itemIds[i] = 0;
         i++;
+        indexOffset++;
     }
+    
     delete [] items;
 }
 
