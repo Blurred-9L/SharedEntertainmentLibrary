@@ -8,8 +8,10 @@ using std::string;
 
 class LoginModel;
 class ItemModel;
+class MemberModel;
 class EntertainmentItem;
 class OwnedItem;
+class Member;
 
 class SELController : public QObject {
 Q_OBJECT
@@ -21,6 +23,8 @@ private:
     LoginModel * loginModel;
     ///
     ItemModel * itemModel;
+    ///
+    MemberModel * memberModel;
     
 public:
     ///
@@ -43,6 +47,8 @@ public slots:
     unsigned long long retrieveItemPolicy(unsigned long long ownedItemId);
     ///
     bool changeItemPolicy(unsigned long long ownedItemId, int policy);
+    ///
+    Member * retrieveData();
 };
 
 #endif /// Not SEL_CONTROLLER_H

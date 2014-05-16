@@ -2,10 +2,12 @@
 #include "../Model/EntertainmentItem.h"
 #include "../Model/LoginModel.h"
 #include "../Model/ItemModel.h"
+#include "../Model/MemberModel.h"
 #include "../Model/Error.h"
 
 SELController::SELController(QObject * parent) :
-    QObject(parent), activeUserId(0), loginModel(0), itemModel(0)
+    QObject(parent), activeUserId(0), loginModel(0), itemModel(0),
+    memberModel(0)
 {
     loginModel = new (std::nothrow) LoginModel();
     if (loginModel == 0) {
@@ -13,6 +15,10 @@ SELController::SELController(QObject * parent) :
     }
     itemModel = new (std::nothrow) ItemModel();
     if (itemModel == 0) {
+        Error::raiseError(Error::ERROR_OUT_OF_MEMORY, true);
+    }
+    memberModel = new (std::nothrow) MemberModel();
+    if (memberModel == 0) {
         Error::raiseError(Error::ERROR_OUT_OF_MEMORY, true);
     }
 }
@@ -92,5 +98,14 @@ bool SELController::changeItemPolicy(unsigned long long ownedItemId, int policy)
     success = itemModel->updateItemPolicy(ownedItemId, policy);
     
     return success;
+}
+
+Member * SELController::retrieveData()
+{
+    Member * member = 0;
+    
+    member = memberModel->getMemberData(activeUserId);
+    
+    return member;
 }
 

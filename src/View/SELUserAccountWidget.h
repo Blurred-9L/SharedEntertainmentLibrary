@@ -10,6 +10,7 @@ class QLineEdit;
 class QLabel;
 
 class LoanRequest;
+class SELController;
 
 /**
  *  @class  SELUserAccountWidget
@@ -18,6 +19,8 @@ class SELUserAccountWidget : public QWidget {
 Q_OBJECT
 
 private:
+    ///
+    SELController & controller;
     ///
     QLabel * usernameLabel;
     ///
@@ -49,12 +52,15 @@ public:
     static const int NUM_COLUMNS;
     
     ///
-    SELUserAccountWidget(QWidget * parent = 0);
+    SELUserAccountWidget(SELController & controller, QWidget * parent = 0);
     ///
     virtual ~SELUserAccountWidget();
     
 public slots:
+    ///
     void updateMessagesTable(LoanRequest ** requests, unsigned numRequests);
+    ///
+    void loadUserData();
     
 private slots:
     ///

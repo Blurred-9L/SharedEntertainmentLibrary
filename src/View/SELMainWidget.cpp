@@ -10,7 +10,7 @@ SELMainWidget::SELMainWidget(SELController & controller, QWidget * parent) :
 {
     mainLibraryWidget = new SELMainLibraryWidget(this->controller);
     userLibraryWidget = new SELUserLibraryWidget(this->controller);
-    userAccountWidget = new SELUserAccountWidget();
+    userAccountWidget = new SELUserAccountWidget(this->controller);
     userLoansWidget = new SELUserLoansWidget();
     
     this->addTab(mainLibraryWidget, "Main library");
@@ -22,6 +22,9 @@ SELMainWidget::SELMainWidget(SELController & controller, QWidget * parent) :
     /// Connect signals here...
     connect(this, SIGNAL(notifyIdAvailable()),
             userLibraryWidget, SLOT(loadFirstPage()));
+    ///
+    connect(this, SIGNAL(notifyIdAvailable()),
+            userAccountWidget, SLOT(loadUserData()));
 }
 
 SELMainWidget::~SELMainWidget()

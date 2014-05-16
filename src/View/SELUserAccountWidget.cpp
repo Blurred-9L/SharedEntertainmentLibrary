@@ -3,6 +3,7 @@
 #include "../Model/OwnedItem.h"
 #include "../Model/Member.h"
 #include "../Model/Error.h"
+#include "../Controller/SELController.h"
 
 #include <QtGui/QTableWidget>
 #include <QtGui/QTableWidgetItem>
@@ -20,8 +21,8 @@ const int SELUserAccountWidget::NUM_COLUMNS = 3;
 ///
 const int WIDTH_OFFSET = 30;
 
-SELUserAccountWidget::SELUserAccountWidget(QWidget * parent) :
-    QWidget(parent), requestIds(0)
+SELUserAccountWidget::SELUserAccountWidget(SELController & controller, QWidget * parent) :
+    QWidget(parent), controller(controller), requestIds(0)
 {
     QStringList headers;
     const char * headerContents[] = {"Date", "Member", "Status"};
@@ -93,6 +94,11 @@ SELUserAccountWidget::SELUserAccountWidget(QWidget * parent) :
     /// Double clicked item on table, show item details dialog.
     connect(messageTableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem *)),
             this, SLOT(emitIdShowData(QTableWidgetItem *)));
+            
+    //member = controller.retrieveData();
+    //usernameLineEdit->setText(member->getUsername().c_str());
+    //emailLineEdit->setText(member->getEmail().c_str());
+    //delete member;
 }
 
 SELUserAccountWidget::~SELUserAccountWidget()
@@ -117,6 +123,18 @@ void SELUserAccountWidget::updateMessagesTable(LoanRequest ** requests, unsigned
         messageTableWidget->item(i, 1)->setText("");
         messageTableWidget->item(i, 2)->setText("");
         i++;
+    }
+}
+
+void SELUserAccountWidget::loadUserData()
+{
+    Member * member = 0;
+    
+    member = controller.retrieveData();
+    if (member != 0) {
+        usernameLineEdit->setText(member->getUsername().c_str());
+        emailLineEdit->setText(member->getEmail().c_str());
+        delete member;
     }
 }
 
