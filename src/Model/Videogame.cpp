@@ -45,6 +45,15 @@ string Videogame::getRatingString(unsigned long long esrbRating)
     case RATING_EVERYONE:
         ratingString = "Everyone";
         break;
+    case RATING_EVERYONE_10:
+        ratingString = "Everyone 10+";
+        break;
+    case RATING_TEEN:
+        ratingString = "Teen";
+        break;
+    case RATING_MATURE:
+        ratingString = "Mature";
+        break;
     }
     
     return ratingString;
@@ -57,6 +66,9 @@ string Videogame::getPlatformString(unsigned long long platform)
     switch (platform) {
     case GAME_PLATFORM_3DS:
         platformString = "Nintendo 3DS";
+        break;
+    case GAME_PLATFORM_DS:
+        platformString = "Nintendo DS";
         break;
     }
     

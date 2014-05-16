@@ -66,6 +66,8 @@ public slots:
     void updateItemPage(OwnedItem * items, unsigned numItems);
     ///
     void loadFirstPage();
+    ///
+    void reloadPage();
     
 private slots:
     ///

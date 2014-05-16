@@ -12,23 +12,29 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>
+#include <QtGui/QMessageBox>
 
 ///
 const unsigned SELMainLibraryWidget::ITEMS_PER_PAGE = 20;
 
 SELMainLibraryWidget::SELMainLibraryWidget(SELController & controller, QWidget * parent) :
-    QWidget(parent), controller(controller), itemIds(0)
+    QWidget(parent), controller(controller), itemIds(0), userLibraryChanged(false)
 {
     EntertainmentItem * items;
     int numItems;
     
     QHBoxLayout * mainLayout = new QHBoxLayout(this);
+    QVBoxLayout * mainInfoLayout = new QVBoxLayout();
     infoLayout = new QVBoxLayout();
     QVBoxLayout * listLayout = new QVBoxLayout();
     QHBoxLayout * listButtonLayout = new QHBoxLayout();
+    QVBoxLayout * buttonLayout = new QVBoxLayout();
     
-    mainLayout->addLayout(infoLayout);
+    mainLayout->addLayout(mainInfoLayout);
     mainLayout->addLayout(listLayout);
+    
+    mainInfoLayout->addLayout(infoLayout);
+    mainInfoLayout->addLayout(buttonLayout);
     
     itemInfo.append(new QLabel("Title"));
     itemInfo.append(new QLabel("Genre"));
@@ -38,6 +44,12 @@ SELMainLibraryWidget::SELMainLibraryWidget(SELController & controller, QWidget *
         infoLayout->addWidget(*i);
     }
     infoLayout->addStretch();
+    
+    addToLibraryButton = new QPushButton("Add to library");
+    buttonLayout->addWidget(addToLibraryButton);
+    
+    requestButton = new QPushButton("Request loan");
+    buttonLayout->addWidget(requestButton);
     
     libraryListWidget = new QListWidget();
     itemIds = new unsigned long long[ITEMS_PER_PAGE];
@@ -69,6 +81,9 @@ SELMainLibraryWidget::SELMainLibraryWidget(SELController & controller, QWidget *
     /// Item on list selected -> updateInfoLabels
     connect(libraryListWidget, SIGNAL(itemClicked(QListWidgetItem *)),
             this, SLOT(emitIdGetData(QListWidgetItem *)));
+    /// Add to library button pressed -> try to add selected item to library.
+    connect(addToLibraryButton, SIGNAL(clicked()),
+            this, SLOT(tryAddToLibrary()));
             
     /// Loads first page of items.
     items = controller.retrieveLibraryPage(1, numItems);
@@ -80,6 +95,16 @@ SELMainLibraryWidget::~SELMainLibraryWidget()
     if (itemIds != 0) {
         delete [] itemIds;
     }
+}
+
+bool SELMainLibraryWidget::checkUserLibraryChanged()
+{
+    return userLibraryChanged;
+}
+
+void SELMainLibraryWidget::setUserLibraryChanged(bool changed)
+{
+    userLibraryChanged = changed;
 }
 
 void SELMainLibraryWidget::updateItemInfo(EntertainmentItem & item,
@@ -196,6 +221,27 @@ void SELMainLibraryWidget::updateItemPage(EntertainmentItem * items,
     delete [] items;
 }
 
+void SELMainLibraryWidget::tryAddToLibrary()
+{
+    QList<QListWidgetItem *> selectedItems = libraryListWidget->selectedItems();
+    EntertainmentItem * item;
+    unsigned long long id, itemType;
+    int size = selectedItems.size();
+    
+    if (size == 1) {
+        id = findId(selectedItems[0]);
+        item = controller.retrieveItem(id, itemType);
+        if (item != 0) {
+            showAddItemConfirmDialog(item);
+            delete item;
+        }
+    } else if (size > 1) {
+        Error::raiseError(Error::ERROR_ITEM_SELECTION_ERROR);
+    } else {
+        Error::raiseError(Error::ERROR_NO_ITEM_SELECTED);
+    }
+}
+
 /////////////
 // Private //
 /////////////
@@ -294,6 +340,36 @@ void SELMainLibraryWidget::replaceLabelText(const QString & text, int index)
         infoLayout->addWidget(itemInfo[index]);
     } else {
         itemInfo[index]->setText(text);
+    }
+}
+
+void SELMainLibraryWidget::showAddItemConfirmDialog(EntertainmentItem * item)
+{
+    QMessageBox confirmDialog(QMessageBox::Question, "Add to Library?", "",
+                              QMessageBox::Ok | QMessageBox::Cancel, this);
+    QString dialogText;
+    bool itemOwned = controller.checkUserOwnsItem(item->getId());
+    bool success;
+    int dialogResult;
+    
+    if (!itemOwned) {
+        dialogText = "Add the selected item (";
+        dialogText += item->getTitle().c_str();
+        dialogText += ") to your library?";
+        confirmDialog.setText(dialogText);
+        confirmDialog.setDefaultButton(QMessageBox::Ok);
+        dialogResult = confirmDialog.exec();
+        if (dialogResult == QMessageBox::Ok) {
+            success = controller.addItemToUserLibrary(item->getId());
+            if (success) {
+                QMessageBox::information(this, "Success!", "Item added");
+                userLibraryChanged = true;
+            } else {
+                Error::raiseError(Error::ERROR_ITEM_ADD_FAIL);
+            }
+        }
+    } else {
+        Error::raiseError(Error::ERROR_ITEM_OWNED);
     }
 }
 

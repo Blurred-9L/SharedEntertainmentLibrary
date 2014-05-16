@@ -36,12 +36,20 @@ private:
     ///
     QPushButton * nextPageButton;
     ///
+    QPushButton * addToLibraryButton;
+    ///
+    QPushButton * requestButton;
+    ///
     unsigned long long * itemIds;
+    ///
+    bool userLibraryChanged;
     
+    ///
+    unsigned long long findId(QListWidgetItem * item);
     ///
     void replaceLabelText(const QString & text, int index);
     ///
-    unsigned long long findId(QListWidgetItem * item);
+    void showAddItemConfirmDialog(EntertainmentItem * item);
 
 public:
     ///
@@ -51,12 +59,18 @@ public:
     SELMainLibraryWidget(SELController & controller, QWidget * parent = 0);
     ///
     virtual ~SELMainLibraryWidget();
+    ///
+    bool checkUserLibraryChanged();
+    ///
+    void setUserLibraryChanged(bool changed);
     
 public slots:
     ///
     void updateItemInfo(EntertainmentItem & item, unsigned long long type);
     ///
     void updateItemPage(EntertainmentItem * items, unsigned numItems);
+    ///
+    void tryAddToLibrary();
     
 private slots:
     ///

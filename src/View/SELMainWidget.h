@@ -33,6 +33,10 @@ public:
     ///
     virtual ~SELMainWidget();
     
+public slots:
+    ///
+    void updateIfNecessary(int index);
+    
 signals:
     ///
     void notifyIdAvailable();

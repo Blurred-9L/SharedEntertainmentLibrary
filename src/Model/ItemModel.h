@@ -45,6 +45,10 @@ public:
     virtual unsigned long long getItemPolicy(unsigned long long ownedItemId);
     ///
     virtual bool updateItemPolicy(unsigned long long ownedItemId, int policy);
+    ///
+    virtual bool checkIfOwned(unsigned long long itemId, unsigned long long ownerId);
+    ///
+    virtual bool linkToMember(unsigned long long itemId, unsigned long long ownerId);
 };
 
 #endif /// Not ITEM_MODEL_H

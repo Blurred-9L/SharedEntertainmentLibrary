@@ -25,8 +25,29 @@ SELMainWidget::SELMainWidget(SELController & controller, QWidget * parent) :
     ///
     connect(this, SIGNAL(notifyIdAvailable()),
             userAccountWidget, SLOT(loadUserData()));
+    ///
+    connect(this, SIGNAL(currentChanged(int)),
+            this, SLOT(updateIfNecessary(int)));
 }
 
 SELMainWidget::~SELMainWidget()
 {
+}
+
+void SELMainWidget::updateIfNecessary(int index)
+{
+    switch (index) {
+    case 0:
+        break;
+    case 1:
+        if (mainLibraryWidget->checkUserLibraryChanged()) {
+            userLibraryWidget->reloadPage();
+            mainLibraryWidget->setUserLibraryChanged(false);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        break;
+    }
 }

@@ -49,6 +49,10 @@ public slots:
     bool changeItemPolicy(unsigned long long ownedItemId, int policy);
     ///
     Member * retrieveData();
+    ///
+    bool checkUserOwnsItem(unsigned long long itemId);
+    ///
+    bool addItemToUserLibrary(unsigned long long itemId);
 };
 
 #endif /// Not SEL_CONTROLLER_H

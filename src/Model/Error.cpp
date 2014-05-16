@@ -93,6 +93,16 @@ string Error::getErrorString(unsigned errorNo)
     case ERROR_POLICY_CHANGE_FAIL:
         errorString = "Error Code 21: The item's loan policy could not be changed.";
         break;
+    case ERROR_ITEM_OWNED:
+        errorString = "Error Code 22: The item is already on your library.";
+        break;
+    case ERROR_ITEM_ADD_FAIL:
+        errorString = "Error Code 23: The item could not be added to your library...";
+        break;
+    case ERROR_PAGE_RELOAD_FAIL:
+        errorString = "Error Code 24: An item page could not be realoaded. Data displayed might not match "
+                      "current data.";
+        break;
     default:
         break;
     }

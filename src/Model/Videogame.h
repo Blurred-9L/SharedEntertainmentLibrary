@@ -19,7 +19,10 @@ public:
      */
     enum ESRBRating {
         RATING_INVALID = 0,
-        RATING_EVERYONE = 1
+        RATING_EVERYONE = 1,
+        RATING_EVERYONE_10 = 3,
+        RATING_TEEN = 4,
+        RATING_MATURE = 5
     };
     
     /**
@@ -28,6 +31,7 @@ public:
     enum GamePlatform {
         GAME_PLATFORM_INVALID = 0,
         GAME_PLATFORM_3DS = 1,
+        GAME_PLATFORM_DS = 2
     };
     
     ///

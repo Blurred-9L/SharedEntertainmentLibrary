@@ -401,3 +401,36 @@ bool ItemModel::updateItemPolicy(unsigned long long ownedItemId, int policy)
     return success;
 }
 
+bool ItemModel::checkIfOwned(unsigned long long itemId, unsigned long long ownerId)
+{
+    bool itemOwned = false;
+    QueryResult * result = 0;
+    stringstream stream(stringstream::out);
+    
+    stream << "SELECT id from Owned_Item WHERE member_id = " << ownerId
+           << " and item_id = " << itemId << ";";
+    
+    result = dbCon.query(stream.str());
+    if (result != 0) {
+        if (result->next()) {
+            itemOwned = true;
+        }
+        delete result;
+    }
+    
+    return itemOwned;
+}
+
+bool ItemModel::linkToMember(unsigned long long itemId, unsigned long long ownerId)
+{
+    bool success = false;
+    stringstream stream(stringstream::out);
+    
+    stream << "INSERT INTO Owned_Item (member_id, item_id, policy) "
+              "VALUES (" << ownerId << ", " << itemId << ", 1);";
+    
+    success = dbCon.nonQuery(stream.str());
+    
+    return success;
+}
+

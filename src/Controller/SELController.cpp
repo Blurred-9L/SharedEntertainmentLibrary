@@ -109,3 +109,21 @@ Member * SELController::retrieveData()
     return member;
 }
 
+bool SELController::checkUserOwnsItem(unsigned long long itemId)
+{
+    bool itemOwned = false;
+    
+    itemOwned = itemModel->checkIfOwned(itemId, activeUserId);
+    
+    return itemOwned;
+}
+
+bool SELController::addItemToUserLibrary(unsigned long long itemId)
+{
+    bool success = false;
+    
+    success = itemModel->linkToMember(itemId, activeUserId);
+    
+    return success;
+}
+

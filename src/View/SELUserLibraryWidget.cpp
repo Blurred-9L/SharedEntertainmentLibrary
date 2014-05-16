@@ -210,6 +210,21 @@ void SELUserLibraryWidget::loadFirstPage()
     }
 }
 
+void SELUserLibraryWidget::reloadPage()
+{
+    OwnedItem * items = 0;
+    int numItems;
+    int curPage;
+    
+    curPage = currentPageLabel->text().toInt();
+    items = controller.retrieveUserLibraryPage(curPage, numItems);
+    if (items != 0) {
+        updateItemPage(items, (unsigned)numItems);
+    } else {
+        Error::raiseError(Error::ERROR_PAGE_RELOAD_FAIL);
+    }
+}
+
 /////////////
 // Private //
 /////////////
