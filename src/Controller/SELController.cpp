@@ -4,6 +4,7 @@
 #include "../Model/ItemModel.h"
 #include "../Model/MemberModel.h"
 #include "../Model/Error.h"
+#include "../Model/OwnedItem.h"
 
 SELController::SELController(QObject * parent) :
     QObject(parent), activeUserId(0), loginModel(0), itemModel(0),
@@ -123,6 +124,28 @@ bool SELController::addItemToUserLibrary(unsigned long long itemId)
     bool success = false;
     
     success = itemModel->linkToMember(itemId, activeUserId);
+    
+    return success;
+}
+
+OwnedItem * SELController::retrieveOwners(unsigned long long itemId, int & numItems)
+{
+    OwnedItem * items = 0;
+    
+    items = itemModel->getOwners(itemId, activeUserId, numItems);
+    
+    return items;
+}
+
+bool SELController::scheduleAutomaticLoan(OwnedItem & item)
+{
+    bool success = false;
+    
+    /// Get last loan of item. 
+    /// If no last loan or loan is over, loan immediately.
+    /// If last loan is not over, get ending date.
+    /// Add a week to ending date.
+    /// Loan item   
     
     return success;
 }

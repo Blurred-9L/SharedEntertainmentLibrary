@@ -13,6 +13,7 @@ class QString;
 
 class SELController;
 class EntertainmentItem;
+class OwnedItem;
 
 /**
  *  @class  SELMainLibraryWidget
@@ -79,6 +80,12 @@ private slots:
     void updatePageIndexPrevious();
     ///
     void emitIdGetData(QListWidgetItem * item);
+    ///
+    void setupRequestDialog();
+    ///
+    void showRequestDialog(unsigned long long id, OwnedItem * items, int numItems);
+    ///
+    void tryToLoanItem(OwnedItem & item);
     
 signals:
     ///

@@ -1,8 +1,10 @@
 #include "SELMainLibraryWidget.h"
+#include "SELRequestDialog.h"
 #include "../Model/Book.h"
 #include "../Model/Movie.h"
 #include "../Model/MusicAlbum.h"
 #include "../Model/Videogame.h"
+#include "../Model/OwnedItem.h"
 #include "../Model/Error.h"
 #include "../Controller/SELController.h"
 
@@ -84,6 +86,9 @@ SELMainLibraryWidget::SELMainLibraryWidget(SELController & controller, QWidget *
     /// Add to library button pressed -> try to add selected item to library.
     connect(addToLibraryButton, SIGNAL(clicked()),
             this, SLOT(tryAddToLibrary()));
+    /// Request loan button pressed -> try to request a loan.
+    connect(requestButton, SIGNAL(clicked()),
+            this, SLOT(setupRequestDialog()));
             
     /// Loads first page of items.
     items = controller.retrieveLibraryPage(1, numItems);
@@ -305,6 +310,67 @@ void SELMainLibraryWidget::emitIdGetData(QListWidgetItem * item)
         }
     } else {
         Error::raiseError(Error::ERROR_ITEM_ID_NOT_FOUND);
+    }
+}
+
+void SELMainLibraryWidget::setupRequestDialog()
+{
+    QList<QListWidgetItem *> selectedItems = libraryListWidget->selectedItems();
+    OwnedItem * items = 0;
+    unsigned long long id;
+    int numItems, size = selectedItems.size();
+    
+    if (size == 1) {
+        id = findId(selectedItems[0]);
+        items = controller.retrieveOwners(id, numItems);
+        if (items != 0) {
+            showRequestDialog(id, items, numItems);
+            delete [] items;
+        } else if (numItems == 0) {
+            Error::raiseError(Error::ERROR_NO_USER_OWNS);
+        }
+    } else if (size > 1) {
+        Error::raiseError(Error::ERROR_ITEM_SELECTION_ERROR);
+    } else {
+        Error::raiseError(Error::ERROR_NO_ITEM_SELECTED);
+    }
+}
+
+void SELMainLibraryWidget::showRequestDialog(unsigned long long id, OwnedItem * items, int numItems)
+{
+    SELRequestDialog * dialog = 0;
+    int result;
+    bool userOwns = false;
+    
+    userOwns = controller.checkUserOwnsItem(id);
+    if (!userOwns) {
+        dialog = new SELRequestDialog(id, items, numItems);
+        result = dialog->exec();
+        if (result >= 0) {
+            tryToLoanItem(items[result]);
+        }
+        delete dialog;
+    } else {
+        Error::raiseError(Error::ERROR_ITEM_ALREADY_OWNED);
+    }
+}
+
+void SELMainLibraryWidget::tryToLoanItem(OwnedItem & item)
+{
+    switch (item.getItemPolicy()) {
+    case OwnedItem::POLICY_FREE:
+        controller.scheduleAutomaticLoan(item);
+        break;
+    case OwnedItem::POLICY_USER:
+        /// show member message dialog
+        /// make user select start date, duration 
+        break;
+    case OwnedItem::POLICY_NO_LOAN:
+        Error::raiseError(Error::ERROR_ITEM_NO_LOAN);
+        break;
+    default:
+        Error::raiseError(Error::ERROR_ITEM_INVALID_POLICY);
+        break;
     }
 }
 

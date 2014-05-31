@@ -53,6 +53,10 @@ public slots:
     bool checkUserOwnsItem(unsigned long long itemId);
     ///
     bool addItemToUserLibrary(unsigned long long itemId);
+    ///
+    OwnedItem * retrieveOwners(unsigned long long itemId, int & numItems);
+    ///
+    bool scheduleAutomaticLoan(OwnedItem & item);
 };
 
 #endif /// Not SEL_CONTROLLER_H

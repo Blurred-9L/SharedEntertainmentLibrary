@@ -103,6 +103,18 @@ string Error::getErrorString(unsigned errorNo)
         errorString = "Error Code 24: An item page could not be realoaded. Data displayed might not match "
                       "current data.";
         break;
+    case ERROR_NO_USER_OWNS:
+        errorString = "Error Code 25: No other user owns the specified item.";
+        break;
+    case ERROR_ITEM_ALREADY_OWNED:
+        errorString = "Error Code 26: You already own the specified item.";
+        break;
+    case ERROR_ITEM_NO_LOAN:
+        errorString = "Error Code 27: The item's policy does not allow it to be loaned.";
+        break;
+    case ERROR_ITEM_INVALID_POLICY:
+        errorString = "Error Code 28: The item's policy is not valid.";
+        break;
     default:
         break;
     }

@@ -6,6 +6,7 @@
 #include "MusicAlbum.h"
 #include "Videogame.h"
 #include "Error.h"
+#include "Member.h"
 #include "../DB/DBConnection.h"
 #include "../DB/QueryResult.h"
 
@@ -432,5 +433,56 @@ bool ItemModel::linkToMember(unsigned long long itemId, unsigned long long owner
     success = dbCon.nonQuery(stream.str());
     
     return success;
+}
+
+OwnedItem * ItemModel::getOwners(unsigned long long itemId, unsigned long long memberId, int & numItems)
+{
+    OwnedItem * ownedItems = 0;
+    OwnedItem * item = 0;
+    Member * member = 0;
+    QueryResult * result = 0;
+    stringstream stream(stringstream::out);
+    int index;
+    
+    stream << "SELECT Item.id, title, Genre.genre, Publisher.publisher, year, "
+              "type, Owned_item.id AS owned_item_id, Member.id AS member_id, "
+              "username, email, policy FROM Item "
+              "JOIN Genre ON Item.genre = Genre.id "
+              "JOIN Publisher ON Item.publisher = Publisher.id "
+              "JOIN Owned_Item ON Owned_Item.item_id = Item.id "
+              "JOIN Member ON Owned_Item.member_id = Member.id "
+              "WHERE Item.id = " << itemId << " "
+              "AND NOT Member.id = " << memberId << " "
+              "AND policy != 3;";
+              
+    result = dbCon.query(stream.str());
+    if (result != 0) {
+        numItems = result->size();
+        if (numItems > 0) {
+            ownedItems = new OwnedItem[numItems];
+        }
+        if (ownedItems != 0) {
+            index = 0;
+            while (result->next()) {
+                item = &ownedItems[index];
+                item->setId(result->value(0).toULongLong());
+                item->setTitle(result->value(1).toString().toAscii().data());
+                item->setGenre(result->value(2).toString().toAscii().data());
+                item->setPublisher(result->value(3).toString().toAscii().data());
+                item->setYear(result->value(4).toUInt());
+                item->setItemType(result->value(5).toULongLong());
+                item->setOwnedItemId(result->value(6).toULongLong());
+                member = new Member();
+                member->setId(result->value(7).toULongLong());
+                member->setUsername(result->value(8).toString().toAscii().data());
+                member->setEmail(result->value(9).toString().toAscii().data());
+                item->setOwner(member);
+                item->setItemPolicy(result->value(10).toULongLong());
+            }
+        }
+        delete result;
+    }
+    
+    return ownedItems;
 }
 

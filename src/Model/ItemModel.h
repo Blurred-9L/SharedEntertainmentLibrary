@@ -49,6 +49,8 @@ public:
     virtual bool checkIfOwned(unsigned long long itemId, unsigned long long ownerId);
     ///
     virtual bool linkToMember(unsigned long long itemId, unsigned long long ownerId);
+    ///
+    virtual OwnedItem * getOwners(unsigned long long itemId, unsigned long long memberId, int & numItems);
 };
 
 #endif /// Not ITEM_MODEL_H
