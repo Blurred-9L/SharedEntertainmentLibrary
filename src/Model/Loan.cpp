@@ -115,3 +115,8 @@ string Loan::toString() const
     
     return returnString;
 }
+
+QDate Loan::getEndingDate() const
+{
+    return startDate.addDays(startDate.daysTo(duration.date()));
+}

@@ -49,6 +49,8 @@ public:
               unsigned long long itemType,
               unsigned long long itemPolicy, Member * owner);
     ///
+    OwnedItem(const OwnedItem & o);
+    ///
     virtual ~OwnedItem();
     ///
     unsigned long long getOwnedItemId() const;

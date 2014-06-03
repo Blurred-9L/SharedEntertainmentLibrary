@@ -24,6 +24,8 @@ public:
     ///
     explicit Member(const string & username);
     ///
+    Member(const Member & m);
+    ///
     virtual ~Member();
     ///
     unsigned long long getId() const;

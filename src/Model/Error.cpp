@@ -115,6 +115,9 @@ string Error::getErrorString(unsigned errorNo)
     case ERROR_ITEM_INVALID_POLICY:
         errorString = "Error Code 28: The item's policy is not valid.";
         break;
+    case ERROR_ITEM_ACTIVE_LOAN:
+        errorString = "Error Code 29: The item is already on loan for this user.";
+        break;
     default:
         break;
     }

@@ -322,6 +322,7 @@ void SELMainLibraryWidget::setupRequestDialog()
     
     if (size == 1) {
         id = findId(selectedItems[0]);
+        /// @todo   Prevent member from receiving a loan twice.
         items = controller.retrieveOwners(id, numItems);
         if (items != 0) {
             showRequestDialog(id, items, numItems);
@@ -357,20 +358,27 @@ void SELMainLibraryWidget::showRequestDialog(unsigned long long id, OwnedItem * 
 
 void SELMainLibraryWidget::tryToLoanItem(OwnedItem & item)
 {
-    switch (item.getItemPolicy()) {
-    case OwnedItem::POLICY_FREE:
-        controller.scheduleAutomaticLoan(item);
-        break;
-    case OwnedItem::POLICY_USER:
-        /// show member message dialog
-        /// make user select start date, duration 
-        break;
-    case OwnedItem::POLICY_NO_LOAN:
-        Error::raiseError(Error::ERROR_ITEM_NO_LOAN);
-        break;
-    default:
-        Error::raiseError(Error::ERROR_ITEM_INVALID_POLICY);
-        break;
+    bool activeLoan = false;
+    
+    activeLoan = controller.checkIfActiveLoan(item.getOwnedItemId());
+    if (!activeLoan) {
+        switch (item.getItemPolicy()) {
+        case OwnedItem::POLICY_FREE:
+            controller.scheduleAutomaticLoan(item);
+            break;
+        case OwnedItem::POLICY_USER:
+            /// show member message dialog
+            /// make user select start date, duration 
+            break;
+        case OwnedItem::POLICY_NO_LOAN:
+            Error::raiseError(Error::ERROR_ITEM_NO_LOAN);
+            break;
+        default:
+            Error::raiseError(Error::ERROR_ITEM_INVALID_POLICY);
+            break;
+        }
+    } else {
+        Error::raiseError(Error::ERROR_ITEM_ACTIVE_LOAN);
     }
 }
 

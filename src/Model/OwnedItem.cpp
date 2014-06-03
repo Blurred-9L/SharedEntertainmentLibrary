@@ -16,6 +16,15 @@ OwnedItem::OwnedItem(const string & title, const string & genre,
 {
 }
 
+OwnedItem::OwnedItem(const OwnedItem & o) :
+    EntertainmentItem(o.getTitle(), o.getGenre(), o.getPublisher(), o.getYear()),
+    itemType(o.itemType), itemPolicy(o.itemPolicy), owner(0)
+{
+    owner = new Member(*o.owner);
+    setId(o.getId());
+    setOwnedItemId(o.getOwnedItemId());
+}
+
 OwnedItem::~OwnedItem()
 {
     if (owner != 0) {

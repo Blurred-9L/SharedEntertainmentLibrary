@@ -47,7 +47,8 @@ public:
         ERROR_NO_USER_OWNS,
         ERROR_ITEM_ALREADY_OWNED,
         ERROR_ITEM_NO_LOAN,
-        ERROR_ITEM_INVALID_POLICY
+        ERROR_ITEM_INVALID_POLICY,
+        ERROR_ITEM_ACTIVE_LOAN
     };
     
     ///

@@ -64,6 +64,8 @@ public:
     void setDuration(const QDateTime & duration);
     ///
     string toString() const;
+    ///
+    QDate getEndingDate() const;
 };
 
 #endif /// Not LOAN_H

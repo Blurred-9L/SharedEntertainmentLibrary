@@ -41,6 +41,14 @@ bool QueryResult::first() const
 /**
  *  @details
  */
+bool QueryResult::last()
+{
+    return queryResult->last();
+}
+
+/**
+ *  @details
+ */
 bool QueryResult::next() const
 {
     return queryResult->next();

@@ -4,6 +4,7 @@
 
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlDriver>
+#include <QtSql/QSqlError>
 
 ///
 const char * _DB_DRIVER_NAME = "QPSQL";
@@ -95,6 +96,14 @@ bool DBConnection::nonQuery(const string & queryString) const
     bool ok = queryObj.exec(queryString.c_str());
     
     return ok;
+}
+
+/**
+ *  @details
+ */
+const char * DBConnection::lastError() const
+{
+    return db.lastError().text().toAscii().data();
 }
 
 /**

@@ -9,6 +9,7 @@ using std::string;
 class LoginModel;
 class ItemModel;
 class MemberModel;
+class LoanModel;
 class EntertainmentItem;
 class OwnedItem;
 class Member;
@@ -25,6 +26,8 @@ private:
     ItemModel * itemModel;
     ///
     MemberModel * memberModel;
+    ///
+    LoanModel * loanModel;
     
 public:
     ///
@@ -57,6 +60,8 @@ public slots:
     OwnedItem * retrieveOwners(unsigned long long itemId, int & numItems);
     ///
     bool scheduleAutomaticLoan(OwnedItem & item);
+    ///
+    bool checkIfActiveLoan(unsigned long long ownedItemId);
 };
 
 #endif /// Not SEL_CONTROLLER_H

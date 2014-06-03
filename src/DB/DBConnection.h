@@ -30,6 +30,7 @@ public:
     ///
     virtual bool nonQuery(const string & queryString) const;
     ///
+    virtual const char * lastError() const;
     
     
     ///

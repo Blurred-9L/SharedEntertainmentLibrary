@@ -23,6 +23,8 @@ public:
     ///
     bool first() const;
     ///
+    bool last();
+    ///
     bool next() const;
     ///
     bool previous() const;

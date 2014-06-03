@@ -10,6 +10,12 @@ Member::Member(const string & username) :
 {
 }
 
+Member::Member(const Member & m) :
+    id(m.id), username(m.username), email(m.email),
+    password(m.password)
+{
+}
+
 Member::~Member()
 {
 }
