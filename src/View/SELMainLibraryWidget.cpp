@@ -1,5 +1,6 @@
 #include "SELMainLibraryWidget.h"
 #include "SELRequestDialog.h"
+#include "SELMessageReqDialog.h"
 #include "../Model/Book.h"
 #include "../Model/Movie.h"
 #include "../Model/MusicAlbum.h"
@@ -359,16 +360,33 @@ void SELMainLibraryWidget::showRequestDialog(unsigned long long id, OwnedItem * 
 void SELMainLibraryWidget::tryToLoanItem(OwnedItem & item)
 {
     bool activeLoan = false;
+    bool loanOk = false;
+    SELMessageReqDialog * dialog = 0;
+    QDate startDate;
+    QString message;
+    int numLoanDays;
+    int result;
     
     activeLoan = controller.checkIfActiveLoan(item.getOwnedItemId());
     if (!activeLoan) {
         switch (item.getItemPolicy()) {
         case OwnedItem::POLICY_FREE:
-            controller.scheduleAutomaticLoan(item);
+            loanOk = controller.scheduleAutomaticLoan(item);
+            if (loanOk) {
+                QMessageBox::information(this, "Success!", "Loan scheduled.");
+            }
             break;
         case OwnedItem::POLICY_USER:
             /// show member message dialog
-            /// make user select start date, duration 
+            dialog = new SELMessageReqDialog(message, startDate, numLoanDays, this);
+            result = dialog->exec();
+            if (result >= 0) {
+                /// User accepted dialog choices.
+                loanOk = controller.processLoanRequest(item, message.toAscii().data(), startDate, numLoanDays);
+                if (loanOk) {
+                    QMessageBox::information(this, "Success!", "Request sent.");
+                }
+            }
             break;
         case OwnedItem::POLICY_NO_LOAN:
             Error::raiseError(Error::ERROR_ITEM_NO_LOAN);

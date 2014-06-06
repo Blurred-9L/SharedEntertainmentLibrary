@@ -2,10 +2,14 @@
 #include "../DB/DBConnection.h"
 #include "../DB/QueryResult.h"
 #include "Loan.h"
+#include "LoanRequest.h"
 #include "Error.h"
 
 #include <sstream>
 using std::stringstream;
+
+const int LoanModel::STATUS_INACTIVE = 1;
+const int LoanModel::STATUS_UNAVAILABLE = 4;
 
 LoanModel::LoanModel() :
     dbCon(DBConnection::getInstance())
@@ -30,6 +34,7 @@ Loan * LoanModel::getLastLoan(unsigned long long ownedItemId)
               "JOIN Owned_Item ON Owned_Item.id = owned_item_id "
               "JOIN Loan_Status ON Loan.status = Loan_Status.id "
               "WHERE owned_item_id = " << ownedItemId << " "
+              "AND status < 4 "
               "ORDER BY start_data ASC;";
               
     result = dbCon.query(stream.str());
@@ -50,7 +55,7 @@ Loan * LoanModel::getLastLoan(unsigned long long ownedItemId)
 }
 
 bool LoanModel::registerLoan(unsigned long long requesteeId, unsigned long long ownedItemId,
-                             const QDate & startDate, const QDateTime & duration)
+                             const QDate & startDate, const QDateTime & duration, int status)
 {
     bool insertOk = false;
     stringstream stream(stringstream::out);
@@ -60,7 +65,7 @@ bool LoanModel::registerLoan(unsigned long long requesteeId, unsigned long long 
            << ownedItemId << ", DATE \'" << startDate.year() << "-"
            << startDate.month() << "-" << startDate.day() << "\', "
            << "INTERVAL \'" << QDateTime(startDate).daysTo(duration)
-           << " days\', 1);";
+           << " days\', " << status << ");";
            
     insertOk = dbCon.nonQuery(stream.str());
         
@@ -108,5 +113,37 @@ bool LoanModel::loanExists(unsigned long long requesteeId, unsigned long long ow
     }
     
     return exists;
+}
+
+unsigned long long LoanModel::getLastLoanId()
+{
+    unsigned long long id = 0;
+    QueryResult * result = 0;
+    stringstream stream(stringstream::out);
+    
+    stream << "SELECT last_value from Loan_id_seq;";
+    result = dbCon.query(stream.str());
+    if (result != 0) {
+        if (result->next()) {
+            id = result->value(0).toULongLong();
+        }
+        delete result;
+    }
+    
+    
+    return id;
+}
+
+bool LoanModel::registerLoanRequest(LoanRequest & request, unsigned long long loanId)
+{
+    bool insertOk = false;
+    stringstream stream(stringstream::out);
+    
+    stream << "INSERT INTO Loan_Request (reply_status, request_status, "
+              "message, loan_id) VALUES (1, FALSE, \'" << request.getMessage() <<
+              "\', " << loanId << ");";
+    insertOk = dbCon.nonQuery(stream.str()); 
+    
+    return insertOk;
 }
 

@@ -8,6 +8,7 @@
 #include "../Model/OwnedItem.h"
 #include "../Model/Member.h"
 #include "../Model/Loan.h"
+#include "../Model/LoanRequest.h"
 
 SELController::SELController(QObject * parent) :
     QObject(parent), activeUserId(0), loginModel(0), itemModel(0),
@@ -174,7 +175,8 @@ bool SELController::scheduleAutomaticLoan(OwnedItem & item)
         /// Loan immediately.
         startDate = QDate::currentDate().addDays(1);
         success = loanModel->registerLoan(requestee->getId(), requestedItem->getOwnedItemId(), startDate,
-                                          QDateTime(startDate).addDays(DEFAULT_LOAN_DURATION));
+                                          QDateTime(startDate).addDays(DEFAULT_LOAN_DURATION),
+                                          LoanModel::STATUS_INACTIVE);
     } else {
         endDate = loan->getEndingDate();
         if (endDate <= QDate::currentDate()) {
@@ -185,12 +187,14 @@ bool SELController::scheduleAutomaticLoan(OwnedItem & item)
                 startDate = QDate::currentDate().addDays(1);
             }
             success = loanModel->registerLoan(requestee->getId(), requestedItem->getOwnedItemId(), startDate,
-                                              QDateTime(startDate).addDays(DEFAULT_LOAN_DURATION));
+                                              QDateTime(startDate).addDays(DEFAULT_LOAN_DURATION),
+                                              LoanModel::STATUS_INACTIVE);
         } else {
             /// Add a week to start date and schedule loan.
             startDate = endDate.addDays(7);
             success = loanModel->registerLoan(requestee->getId(), requestedItem->getOwnedItemId(), startDate,
-                                              QDateTime(startDate).addDays(DEFAULT_LOAN_DURATION));
+                                              QDateTime(startDate).addDays(DEFAULT_LOAN_DURATION),
+                                              LoanModel::STATUS_INACTIVE);
         }
         delete loan;
     }
@@ -205,5 +209,32 @@ bool SELController::checkIfActiveLoan(unsigned long long ownedItemId)
     activeLoan = loanModel->loanExists(activeUserId, ownedItemId);
     
     return activeLoan;
+}
+
+bool SELController::processLoanRequest(OwnedItem & item, const string & message,
+                                       const QDate & date, int daysOnLoan)
+{
+    bool loanOk = false;
+    bool requestOk = false;
+    Member * requestee = memberModel->getMemberData(activeUserId);
+    OwnedItem * requestedItem = new OwnedItem(item);
+    LoanRequest * request;
+    QDateTime duration = QDateTime(date).addDays(daysOnLoan);
+    unsigned long long loanId;
+    
+    request = new LoanRequest(requestee, requestedItem, date, duration, message.c_str());
+    loanOk = loanModel->registerLoan(requestee->getId(), requestedItem->getOwnedItemId(), date,
+                                     duration, LoanModel::STATUS_UNAVAILABLE);
+    if (loanOk) {
+        /// Obtain last loan id
+        loanId = loanModel->getLastLoanId();
+        request->setId(loanId);
+        /// Register loan request.
+        requestOk = loanModel->registerLoanRequest(*request, loanId);
+    }
+    
+    delete request;
+    
+    return (loanOk && requestOk);
 }
 

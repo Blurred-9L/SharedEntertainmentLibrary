@@ -14,6 +14,8 @@ class EntertainmentItem;
 class OwnedItem;
 class Member;
 
+class QDate;
+
 class SELController : public QObject {
 Q_OBJECT
 
@@ -62,6 +64,9 @@ public slots:
     bool scheduleAutomaticLoan(OwnedItem & item);
     ///
     bool checkIfActiveLoan(unsigned long long ownedItemId);
+    ///
+    bool processLoanRequest(OwnedItem & item, const string & message,
+                            const QDate & date, int daysOnLoan);
 };
 
 #endif /// Not SEL_CONTROLLER_H
