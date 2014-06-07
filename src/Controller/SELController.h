@@ -13,6 +13,8 @@ class LoanModel;
 class EntertainmentItem;
 class OwnedItem;
 class Member;
+class Loan;
+class LoanRequest;
 
 class QDate;
 
@@ -67,6 +69,10 @@ public slots:
     ///
     bool processLoanRequest(OwnedItem & item, const string & message,
                             const QDate & date, int daysOnLoan);
+    ///
+    Loan * retrieveLoanPage(int pageToGet, int & numLoans);
+    ///
+    LoanRequest * retrieveRequestPage(int pageToGet, int & numLoans);
 };
 
 #endif /// Not SEL_CONTROLLER_H

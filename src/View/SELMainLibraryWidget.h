@@ -44,6 +44,10 @@ private:
     unsigned long long * itemIds;
     ///
     bool userLibraryChanged;
+    ///
+    bool userLoansChanged;
+    ///
+    bool userRequestsChanged;
     
     ///
     unsigned long long findId(QListWidgetItem * item);
@@ -64,6 +68,14 @@ public:
     bool checkUserLibraryChanged();
     ///
     void setUserLibraryChanged(bool changed);
+    ///
+    bool checkUserLoansChanged();
+    ///
+    void setUserLoansChanged(bool changed);
+    ///
+    bool checkUserRequestsChanged();
+    ///
+    void setUserRequestsChanged(bool changed);
     
 public slots:
     ///

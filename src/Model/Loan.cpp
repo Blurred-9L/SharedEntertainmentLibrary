@@ -3,7 +3,8 @@
 #include "OwnedItem.h"
 
 Loan::Loan() :
-    requestingMember(0), requestedItem(0), startDate(), duration()
+    requestingMember(0), requestedItem(0), startDate(), duration(),
+    status(0)
 {
     requestingMember = new Member();
     requestedItem = new OwnedItem();
@@ -13,7 +14,7 @@ Loan::Loan(Member * requestingMember, OwnedItem * requestedItem,
            const QDate & startDate, const QDateTime & duration) :
     requestingMember(requestingMember), requestedItem(requestedItem),
     startDate(startDate.year(), startDate.month(), startDate.day()),
-    duration(duration)
+    duration(duration), status(0)
 {
 }
 
@@ -72,6 +73,11 @@ QDateTime & Loan::getDuration()
     return duration;
 }
 
+unsigned long long Loan::getStatus() const
+{
+    return status;
+}
+
 void Loan::setId(unsigned long long id)
 {
     this->id = id;
@@ -105,6 +111,11 @@ void Loan::setDuration(const QDateTime & duration)
     this->duration.setTime(duration.time());
 }
 
+void Loan::setStatus(unsigned long long status)
+{
+    this->status = status;
+}
+
 string Loan::toString() const
 {
     string returnString;
@@ -112,6 +123,8 @@ string Loan::toString() const
     returnString += requestedItem->getTitle();
     returnString += " - ";
     returnString += requestedItem->getOwner().getUsername();
+    returnString += " - ";
+    returnString += getStatusString(status);
     
     return returnString;
 }
@@ -119,4 +132,31 @@ string Loan::toString() const
 QDate Loan::getEndingDate() const
 {
     return startDate.addDays(startDate.daysTo(duration.date()));
+}
+
+string Loan::getStatusString(unsigned long long status)
+{
+    string statusString = "";
+    
+    switch (status) {
+    case LOAN_STATUS_INACTIVE:
+        statusString = "Inactive";
+        break;
+    case LOAN_STATUS_ACTIVE:
+        statusString = "Active";
+        break;
+    case LOAN_STATUS_ENDED:
+        statusString = "Ended";
+        break;
+    case LOAN_STATUS_NOT_AVAILABLE:
+        statusString = "Unavailable";
+        break;
+    case LOAN_STATUS_IMPOSSIBLE:
+        statusString = "Impossible";
+        break;
+    default:
+        break;
+    }
+    
+    return statusString;
 }

@@ -238,3 +238,19 @@ bool SELController::processLoanRequest(OwnedItem & item, const string & message,
     return (loanOk && requestOk);
 }
 
+Loan * SELController::retrieveLoanPage(int pageToGet, int & numLoans)
+{
+    Loan * loans = 0;
+    
+    loans = loanModel->getUserLoansOnPage(activeUserId, pageToGet, numLoans);
+    
+    return loans;
+}
+
+LoanRequest * SELController::retrieveRequestPage(int pageToGet, int & numLoans)
+{
+    LoanRequest * requests = 0;
+    
+    return requests;
+}
+

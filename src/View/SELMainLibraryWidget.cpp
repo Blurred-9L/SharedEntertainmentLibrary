@@ -21,7 +21,8 @@
 const unsigned SELMainLibraryWidget::ITEMS_PER_PAGE = 20;
 
 SELMainLibraryWidget::SELMainLibraryWidget(SELController & controller, QWidget * parent) :
-    QWidget(parent), controller(controller), itemIds(0), userLibraryChanged(false)
+    QWidget(parent), controller(controller), itemIds(0), userLibraryChanged(false),
+    userLoansChanged(false), userRequestsChanged(false)
 {
     EntertainmentItem * items;
     int numItems;
@@ -111,6 +112,26 @@ bool SELMainLibraryWidget::checkUserLibraryChanged()
 void SELMainLibraryWidget::setUserLibraryChanged(bool changed)
 {
     userLibraryChanged = changed;
+}
+
+bool SELMainLibraryWidget::checkUserLoansChanged()
+{
+    return userLoansChanged;
+}
+
+void SELMainLibraryWidget::setUserLoansChanged(bool changed)
+{
+    userLoansChanged = changed;
+}
+
+bool SELMainLibraryWidget::checkUserRequestsChanged()
+{
+    return userRequestsChanged;
+}
+
+void SELMainLibraryWidget::setUserRequestsChanged(bool changed)
+{
+    userRequestsChanged = changed;
 }
 
 void SELMainLibraryWidget::updateItemInfo(EntertainmentItem & item,
@@ -374,6 +395,7 @@ void SELMainLibraryWidget::tryToLoanItem(OwnedItem & item)
             loanOk = controller.scheduleAutomaticLoan(item);
             if (loanOk) {
                 QMessageBox::information(this, "Success!", "Loan scheduled.");
+                userLoansChanged = true;
             }
             break;
         case OwnedItem::POLICY_USER:

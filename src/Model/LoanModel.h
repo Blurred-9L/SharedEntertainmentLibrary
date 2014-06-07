@@ -38,6 +38,8 @@ public:
     unsigned long long getLastLoanId();
     ///
     bool registerLoanRequest(LoanRequest & request, unsigned long long loanId);
+    ///
+    Loan * getUserLoansOnPage(unsigned long long userId, int pageNumber, int & numLoans);
 };
 
 #endif /// Not LOAN_MODEL_h

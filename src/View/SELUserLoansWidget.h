@@ -7,6 +7,7 @@ class QListWidget;
 class QPushButton;
 class QLabel;
 
+class SELController;
 class Loan;
 class LoanRequest;
 
@@ -17,6 +18,8 @@ class SELUserLoansWidget : public QWidget {
 Q_OBJECT
 
 private:
+    ///
+    SELController & controller;
     ///
     QListWidget * loansListWidget;
     ///
@@ -47,15 +50,19 @@ public:
     static const unsigned ITEMS_PER_PAGE;
 
     ///
-    SELUserLoansWidget(QWidget * parent = 0);
+    SELUserLoansWidget(SELController & controller, QWidget * parent = 0);
     ///
     virtual ~SELUserLoansWidget();
     
 public slots:
     ///
-    void updateLoansPage(Loan ** loans, unsigned numLoans);
+    void updateLoansPage(Loan * loans, unsigned numLoans);
     ///
-    void updateRequestsPage(LoanRequest ** requests, unsigned numRequests);
+    void updateRequestsPage(LoanRequest * requests, unsigned numRequests);
+    ///
+    void loadFirstLoanPage();
+    ///
+    void reloadLoanPage();
     
 private slots:
     ///

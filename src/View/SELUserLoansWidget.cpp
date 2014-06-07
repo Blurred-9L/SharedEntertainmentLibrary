@@ -1,4 +1,5 @@
 #include "SELUserLoansWidget.h"
+#include "../Controller/SELController.h"
 #include "../Model/Loan.h"
 #include "../Model/LoanRequest.h"
 #include "../Model/Error.h"
@@ -12,8 +13,8 @@
 
 const unsigned SELUserLoansWidget::ITEMS_PER_PAGE = 15;
 
-SELUserLoansWidget::SELUserLoansWidget(QWidget * parent) :
-    QWidget(parent), loanIds(0), requestIds(0)
+SELUserLoansWidget::SELUserLoansWidget(SELController & controller, QWidget * parent) :
+    QWidget(parent), controller(controller), loanIds(0), requestIds(0)
 {
     QHBoxLayout * mainLayout = new QHBoxLayout(this);
     QVBoxLayout * loansLayout = new QVBoxLayout();
@@ -95,52 +96,90 @@ SELUserLoansWidget::~SELUserLoansWidget()
     }
 }
 
-void SELUserLoansWidget::updateLoansPage(Loan ** loans, unsigned numLoans)
+void SELUserLoansWidget::loadFirstLoanPage()
+{
+    Loan * loans = 0;
+    int numLoans = 0;
+    
+    loans = controller.retrieveLoanPage(1, numLoans);
+    if (loans != 0) {
+        updateLoansPage(loans, (unsigned)numLoans);
+    }
+}
+
+void SELUserLoansWidget::reloadLoanPage()
+{
+    Loan * loans = 0;
+    int numLoans = 0;
+    int curPage;
+    
+    curPage = curLoanPageLabel->text().toInt();
+    loans = controller.retrieveLoanPage(curPage, numLoans);
+    if (loans != 0) {
+        updateLoansPage(loans, (unsigned)numLoans);
+    } else {
+        Error::raiseError(Error::ERROR_PAGE_RELOAD_FAIL);
+    }
+}
+
+void SELUserLoansWidget::updateLoansPage(Loan * loans, unsigned numLoans)
 {
     QList<QListWidgetItem *> listItems = loansListWidget->findItems("*", Qt::MatchWildcard);
     QListWidgetItem * removedItem = 0;
-    unsigned i, size = listItems.size();
+    unsigned i, size = listItems.size(), indexOffset;
     
     for (i = 0; i < numLoans; i++) {
         if (i >= size) {
             loansListWidget->addItem(new QListWidgetItem());
         }
-        loansListWidget->item(i)->setText(loans[i]->toString().c_str());
-        loanIds[i] = loans[i]->getId();
+        loansListWidget->item(i)->setText(loans[i].toString().c_str());
+        loanIds[i] = loans[i].getId();
     }
     
     /// If less loans were obtained than there previously were:
+    indexOffset = 0;
     while (i < size) {
-        removedItem = loansListWidget->takeItem(i);
+        removedItem = loansListWidget->takeItem(i - indexOffset);
         if (removedItem != 0) {
             delete removedItem;
+            removedItem = 0;
         }
+        loanIds[i] = 0;
         i++;
+        indexOffset++;
     }
+    
+    delete [] loans;
 }
 
-void SELUserLoansWidget::updateRequestsPage(LoanRequest ** requests, unsigned numRequests)
+void SELUserLoansWidget::updateRequestsPage(LoanRequest * requests, unsigned numRequests)
 {
     QList<QListWidgetItem *> listItems = requestsListWidget->findItems("*", Qt::MatchWildcard);
     QListWidgetItem * removedItem = 0;
-    unsigned i, size = listItems.size();
+    unsigned i, size = listItems.size(), indexOffset;
     
     for (i = 0; i < numRequests; i++) {
         if (i >= size) {
             requestsListWidget->addItem(new QListWidgetItem());
         }
-        requestsListWidget->item(i)->setText(requests[i]->toString().c_str());
-        requestIds[i] = requests[i]->getId();
+        requestsListWidget->item(i)->setText(requests[i].toString().c_str());
+        requestIds[i] = requests[i].getId();
     }
     
     /// If less requests were obtained than there previously were:
+    indexOffset = 0;
     while (i < size) {
-        removedItem = requestsListWidget->takeItem(i);
+        removedItem = requestsListWidget->takeItem(i - indexOffset);
         if (removedItem != 0) {
             delete removedItem;
+            removedItem = 0;
         }
+        requestIds[i] = 0;
         i++;
+        indexOffset++;
     }
+    
+    delete [] requests;
 }
 
 /////////////
@@ -149,15 +188,20 @@ void SELUserLoansWidget::updateRequestsPage(LoanRequest ** requests, unsigned nu
 
 void SELUserLoansWidget::updateLoansPageNext()
 {
+    Loan * loans = 0;
     int pageToGet;
+    int numLoans = 0;
     bool ok;
     
     pageToGet = curLoanPageLabel->text().toInt(&ok);
     
     if (ok) {
         pageToGet++;
-        emit getUserLoansPage(pageToGet);
-        curLoanPageLabel->setNum(pageToGet);
+        loans = controller.retrieveLoanPage(pageToGet, numLoans);
+        if ((loans != 0) && (numLoans > 0)) {
+            curLoanPageLabel->setNum(pageToGet);
+            updateLoansPage(loans, (unsigned)numLoans);
+        }
     } else {
         Error::raiseError(Error::ERROR_NO_SUCH_PAGE_LOAN);
     }
