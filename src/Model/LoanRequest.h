@@ -25,7 +25,10 @@ public:
      *  @enum   RequestStatus
      */
     enum RequestStatus {
-        STATUS_UNKNOWN = 0
+        REQUEST_STATUS_UNKNOWN = 0,
+        REQUEST_STATUS_UNANSWERED,
+        REQUEST_STATUS_ACCEPTED,
+        REQUEST_STATUS_REJECTED
     };
     
     ///

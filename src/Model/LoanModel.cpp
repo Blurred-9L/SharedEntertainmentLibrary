@@ -183,9 +183,9 @@ Loan * LoanModel::getUserLoansOnPage(unsigned long long userId, int pageNumber, 
                   "JOIN Loan ON Owned_Item.id = Loan.owned_item_id) "
               "AS Owner ON owner_id = Owned_Item.member_id "
               "AND inner_loan_id = Loan.id "
-              "WHERE requestee_id = " << userId << " "
+              "WHERE owner_id = " << userId << " "
               "AND Loan.status <= 3 "
-              "ORDER BY start_data ASC, Loan.id ASC "
+              "ORDER BY start_data DESC, Loan.id ASC "
               "LIMIT 15 OFFSET " << offset << ";";
               
     result = dbCon.query(stream.str());
@@ -240,5 +240,99 @@ Loan * LoanModel::getUserLoansOnPage(unsigned long long userId, int pageNumber, 
     }
     
     return loans;
+}
+
+LoanRequest * LoanModel::getRequestsOfUserPage(unsigned long long userId,
+                                           int pageNumber, int & numRequests)
+{
+    LoanRequest * requests = 0;
+    LoanRequest * request = 0;
+    OwnedItem * item = 0;
+    Member * member = 0;
+    Member * owner = 0;
+    stringstream stream(stringstream::out);
+    stringstream interval(stringstream::in | stringstream::out);
+    QueryResult * result;
+    unsigned index;
+    unsigned offset = (pageNumber - 1) * 15;
+    int days;
+    
+    stream << "SELECT Loan_Request.id, reply_status, request_status, "
+              "loan_id, requestee_id, owned_item_id, start_data, "
+              "duration, Loan.status, Item.id AS e_item_id, title, "
+              "Genre.genre, Publisher.publisher, year, Item.type, "
+              "Owned_Item.policy, username, email, owner_id, "
+              "owner_username, owner_email FROM Loan_Request "
+              "JOIN Loan ON loan_id = Loan.id "
+              "JOIN Owned_Item ON owned_item_id = Owned_Item.id "
+              "JOIN Item ON Item.id = Owned_Item.item_id "
+              "JOIN Publisher ON Publisher.id = Item.publisher "
+              "JOIN Genre ON Item.genre = Genre.id "
+              "JOIN Member ON requestee_id = Member.id "
+              "JOIN "
+                  "(SELECT Loan.id AS inner_loan_id, Member.id as owner_id, "
+                  "username AS owner_username, email AS owner_email "
+                  "FROM Member "
+                  "JOIN Owned_Item ON Member.id = Owned_Item.member_id "
+                  "JOIN Loan ON Owned_Item.id = Loan.owned_item_id) "
+              "AS Owner ON owner_id = Owned_Item.member_id "
+              "AND inner_loan_id = Loan.id "
+              "WHERE requestee_id = " << userId << " "
+              "ORDER BY start_data ASC, Loan_Request.id ASC "
+              "LIMIT 15 OFFSET " << offset << ";";
+              
+    result = dbCon.query(stream.str());
+    if (result != 0) {
+        numRequests = result->size();
+        if (numRequests > 0) {
+            requests = new (std::nothrow) LoanRequest[numRequests];
+        }
+        if (numRequests != 0) {
+            index = 0;
+            while (result->next()) {
+                request = &requests[index];
+                /// Set loan's data.
+                request->setRequestId(result->value(0).toULongLong());
+                request->setRequestStatus(result->value(1).toULongLong());
+                request->setReplySent(result->value(2).toBool());
+                request->setId(result->value(3).toULongLong());
+                request->setStartDate(result->value(6).toDate());
+                
+                interval.seekp(interval.beg);
+                interval << result->value(7).toString().toAscii().data();
+                interval.seekg(interval.beg);
+                interval >> days;
+                request->setDuration(QDateTime(request->getStartDate().addDays(days)));
+                request->setStatus(result->value(8).toULongLong());
+                /// Set item's data.
+                item = new OwnedItem();
+                item->setId(result->value(9).toULongLong());
+                item->setTitle(result->value(10).toString().toAscii().data());
+                item->setGenre(result->value(11).toString().toAscii().data());
+                item->setPublisher(result->value(12).toString().toAscii().data());
+                item->setYear(result->value(13).toUInt());
+                item->setOwnedItemId(result->value(5).toULongLong());
+                item->setItemType(result->value(14).toULongLong());
+                item->setItemPolicy(result->value(15).toULongLong());
+                request->setRequestedItem(item);
+                /// Set requestee's data.
+                member = new Member();
+                member->setId(result->value(4).toULongLong());
+                member->setUsername(result->value(16).toString().toAscii().data());
+                member->setEmail(result->value(17).toString().toAscii().data());
+                request->setRequestingMember(member);
+                /// Set owner's data.
+                owner = new Member();
+                owner->setId(result->value(18).toULongLong());
+                owner->setUsername(result->value(19).toString().toAscii().data());
+                owner->setEmail(result->value(20).toString().toAscii().data());
+                item->setOwner(owner);
+                index++;
+            }
+        }
+        delete result;
+    }
+    
+    return requests;
 }
 

@@ -63,6 +63,10 @@ public slots:
     void loadFirstLoanPage();
     ///
     void reloadLoanPage();
+    ///
+    void loadFirstRequestPage();
+    ///
+    void reloadRequestPage();
     
 private slots:
     ///

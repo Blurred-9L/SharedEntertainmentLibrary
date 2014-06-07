@@ -247,9 +247,11 @@ Loan * SELController::retrieveLoanPage(int pageToGet, int & numLoans)
     return loans;
 }
 
-LoanRequest * SELController::retrieveRequestPage(int pageToGet, int & numLoans)
+LoanRequest * SELController::retrieveRequestPage(int pageToGet, int & numRequests)
 {
     LoanRequest * requests = 0;
+    
+    requests = loanModel->getRequestsOfUserPage(activeUserId, pageToGet, numRequests);
     
     return requests;
 }

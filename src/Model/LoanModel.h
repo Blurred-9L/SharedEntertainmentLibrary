@@ -40,6 +40,8 @@ public:
     bool registerLoanRequest(LoanRequest & request, unsigned long long loanId);
     ///
     Loan * getUserLoansOnPage(unsigned long long userId, int pageNumber, int & numLoans);
+    ///
+    LoanRequest * getRequestsOfUserPage(unsigned long long userId, int pageNumber, int & numRequests);
 };
 
 #endif /// Not LOAN_MODEL_h

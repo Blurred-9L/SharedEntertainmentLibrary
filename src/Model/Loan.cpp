@@ -122,7 +122,7 @@ string Loan::toString() const
     
     returnString += requestedItem->getTitle();
     returnString += " - ";
-    returnString += requestedItem->getOwner().getUsername();
+    returnString += requestingMember->getUsername();
     returnString += " - ";
     returnString += getStatusString(status);
     

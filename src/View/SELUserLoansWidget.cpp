@@ -122,6 +122,32 @@ void SELUserLoansWidget::reloadLoanPage()
     }
 }
 
+void SELUserLoansWidget::loadFirstRequestPage()
+{
+    LoanRequest * requests = 0;
+    int numRequests;
+    
+    requests = controller.retrieveRequestPage(1, numRequests);
+    if (requests != 0) {
+        updateRequestsPage(requests, (unsigned)numRequests);
+    }
+}
+
+void SELUserLoansWidget::reloadRequestPage()
+{
+    LoanRequest * requests = 0;
+    int numRequests = 0;
+    int curPage;
+    
+    curPage = curLoanPageLabel->text().toInt();
+    requests = controller.retrieveRequestPage(curPage, numRequests);
+    if (requests != 0) {
+        updateRequestsPage(requests, (unsigned)numRequests);
+    } else {
+        Error::raiseError(Error::ERROR_PAGE_RELOAD_FAIL);
+    }
+}
+
 void SELUserLoansWidget::updateLoansPage(Loan * loans, unsigned numLoans)
 {
     QList<QListWidgetItem *> listItems = loansListWidget->findItems("*", Qt::MatchWildcard);
@@ -209,6 +235,8 @@ void SELUserLoansWidget::updateLoansPageNext()
 
 void SELUserLoansWidget::updateLoansPagePrev()
 {
+    Loan * loans = 0;
+    int numLoans = 0;
     int pageToGet;
     bool ok;
     
@@ -217,8 +245,11 @@ void SELUserLoansWidget::updateLoansPagePrev()
     if (ok) {
         pageToGet--;
         if (pageToGet > 0) {
-            emit getUserLoansPage(pageToGet);
-            curLoanPageLabel->setNum(pageToGet);
+            loans = controller.retrieveLoanPage(pageToGet, numLoans);
+            if ((loans != 0) && (numLoans > 0)) {
+                curLoanPageLabel->setNum(pageToGet);
+                updateLoansPage(loans, (unsigned)numLoans);
+            }
         }
     } else {
         Error::raiseError(Error::ERROR_NO_SUCH_PAGE_LOAN);
@@ -227,15 +258,20 @@ void SELUserLoansWidget::updateLoansPagePrev()
 
 void SELUserLoansWidget::updateRequestsPageNext()
 {
+    LoanRequest * requests = 0;
     int pageToGet;
+    int numRequests = 0;
     bool ok;
     
     pageToGet = curRequestPageLabel->text().toInt(&ok);
     
     if (ok) {
         pageToGet++;
-        emit getUserRequestsPage(pageToGet);
-        curRequestPageLabel->setNum(pageToGet);
+        requests = controller.retrieveRequestPage(pageToGet, numRequests);
+        if ((requests != 0) && (numRequests > 0)) {
+            curRequestPageLabel->setNum(pageToGet);
+            updateRequestsPage(requests, (unsigned)numRequests);
+        }
     } else {
         Error::raiseError(Error::ERROR_NO_SUCH_PAGE_REQ);
     }
@@ -243,6 +279,8 @@ void SELUserLoansWidget::updateRequestsPageNext()
 
 void SELUserLoansWidget::updateRequestsPagePrev()
 {
+    LoanRequest * requests = 0;
+    int numRequests = 0;
     int pageToGet;
     bool ok;
     
@@ -251,8 +289,11 @@ void SELUserLoansWidget::updateRequestsPagePrev()
     if (ok) {
         pageToGet--;
         if (pageToGet > 0) {
-            emit getUserRequestsPage(pageToGet);
-            curRequestPageLabel->setNum(pageToGet);
+            requests = controller.retrieveRequestPage(pageToGet, numRequests);
+            if ((requests != 0) && (numRequests > 0)) {
+                curRequestPageLabel->setNum(pageToGet);
+                updateRequestsPage(requests, (unsigned)numRequests);
+            }
         }
     } else {
         Error::raiseError(Error::ERROR_NO_SUCH_PAGE_REQ);

@@ -72,7 +72,7 @@ public slots:
     ///
     Loan * retrieveLoanPage(int pageToGet, int & numLoans);
     ///
-    LoanRequest * retrieveRequestPage(int pageToGet, int & numLoans);
+    LoanRequest * retrieveRequestPage(int pageToGet, int & numRequests);
 };
 
 #endif /// Not SEL_CONTROLLER_H

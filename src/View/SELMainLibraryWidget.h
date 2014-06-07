@@ -45,8 +45,6 @@ private:
     ///
     bool userLibraryChanged;
     ///
-    bool userLoansChanged;
-    ///
     bool userRequestsChanged;
     
     ///
@@ -68,10 +66,6 @@ public:
     bool checkUserLibraryChanged();
     ///
     void setUserLibraryChanged(bool changed);
-    ///
-    bool checkUserLoansChanged();
-    ///
-    void setUserLoansChanged(bool changed);
     ///
     bool checkUserRequestsChanged();
     ///

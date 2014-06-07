@@ -63,6 +63,9 @@ string LoanRequest::toString() const
 {
     string returnString = Loan::toString();
     
+    returnString = getRequestedItem().getTitle();
+    returnString += " - ";
+    returnString += getRequestedItem().getOwner().getUsername();
     returnString += " - ";
     returnString += getRequestStatusString(requestStatus);
     
@@ -72,6 +75,20 @@ string LoanRequest::toString() const
 string LoanRequest::getRequestStatusString(unsigned long long requestStatus)
 {
     string requestStatusString = "";
+    
+    switch (requestStatus) {
+    case REQUEST_STATUS_UNANSWERED:
+        requestStatusString = "Unanswered";
+        break;
+    case REQUEST_STATUS_ACCEPTED:
+        requestStatusString = "Accepted";
+        break;
+    case REQUEST_STATUS_REJECTED:
+        requestStatusString = "Rejected";
+        break;
+    default:
+        break;
+    }
     
     return requestStatusString;
 }
