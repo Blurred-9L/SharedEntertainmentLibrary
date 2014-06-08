@@ -33,6 +33,7 @@ SELController::SELController(QObject * parent) :
     
     /// Updates loans status.
     loanModel->updateLoanStatuses();
+    /// Updates requests whose related loans should have started, but don't hava an answer yet.
 }
 
 SELController::~SELController()
@@ -254,5 +255,55 @@ LoanRequest * SELController::retrieveRequestPage(int pageToGet, int & numRequest
     requests = loanModel->getRequestsOfUserPage(activeUserId, pageToGet, numRequests);
     
     return requests;
+}
+
+LoanRequest * SELController::retrieveMessagePage(int pageToGet, int & numRequests)
+{
+    LoanRequest * requests = 0;
+    
+    requests = loanModel->getUserMessagesPage(activeUserId, pageToGet, numRequests);
+    
+    return requests;
+}
+
+string * SELController::getMessage(unsigned long long requestId)
+{
+    string * message = 0;
+    
+    message = loanModel->getRequestMessage(requestId);
+    
+    return message;
+}
+
+LoanRequest * SELController::retrieveRequest(unsigned long long requestId)
+{
+    LoanRequest * request = 0;
+    
+    request = loanModel->getLoanRequest(requestId);
+    
+    return request;
+}
+
+bool SELController::processRequestReply(unsigned long long requestId, bool accepted)
+{
+    bool ok = false;
+    
+    if (accepted) {
+        ok = loanModel->acceptLoanRequest(requestId);
+    } else {
+        ok = loanModel->rejectLoanRequest(requestId);
+    }
+    
+    return ok;
+}
+
+bool SELController::checkIfLoanPossible(LoanRequest * request)
+{
+    bool ok = false;
+    
+    ok = loanModel->loanPossible(request->getStartDate(), request->getEndingDate(),
+                                 request->getRequestedItem().getOwnedItemId());
+    
+    return ok;
 }
 

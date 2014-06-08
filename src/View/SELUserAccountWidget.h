@@ -41,9 +41,13 @@ private:
     QPushButton * previousPageButton;
     ///
     unsigned long long * requestIds;
+    ///
+    bool userLoansChanged;
     
     ///
     unsigned long long findId(QTableWidgetItem * item);
+    ///
+    void sendMessageReply(unsigned reply, unsigned long long requestId);
 
 public:
     ///
@@ -55,12 +59,20 @@ public:
     SELUserAccountWidget(SELController & controller, QWidget * parent = 0);
     ///
     virtual ~SELUserAccountWidget();
+    ///
+    bool checkUserLoansChanged();
+    ///
+    void setUserLoansChanged(bool changed);
     
 public slots:
     ///
-    void updateMessagesTable(LoanRequest ** requests, unsigned numRequests);
+    void updateMessagesTable(LoanRequest * requests, unsigned numRequests);
     ///
     void loadUserData();
+    ///
+    void loadFirstMessagePage();
+    ///
+    void reloadMessagePage();
     
 private slots:
     ///
