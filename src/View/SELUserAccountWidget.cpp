@@ -13,19 +13,20 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
+#include <QtGui/QMessageBox>
 #include <QtCore/QStringList>
 
 const int SELUserAccountWidget::ROWS_PER_PAGE = 10;
-const int SELUserAccountWidget::NUM_COLUMNS = 3;
+const int SELUserAccountWidget::NUM_COLUMNS = 4;
 
 ///
 const int WIDTH_OFFSET = 30;
 
 SELUserAccountWidget::SELUserAccountWidget(SELController & controller, QWidget * parent) :
-    QWidget(parent), controller(controller), requestIds(0)
+    QWidget(parent), controller(controller), requestIds(0), userLoansChanged(false)
 {
     QStringList headers;
-    const char * headerContents[] = {"Date", "Member", "Status"};
+    const char * headerContents[] = {"Date", "Member", "Item", "Status"};
     int tableWidth = 0;
     
     QHBoxLayout * mainLayout = new QHBoxLayout(this);
@@ -64,6 +65,11 @@ SELUserAccountWidget::SELUserAccountWidget(SELController & controller, QWidget *
         tableWidth += messageTableWidget->columnWidth(i);
     }
     messageTableWidget->setMinimumWidth(tableWidth + WIDTH_OFFSET);
+    for (int i = 0; i < ROWS_PER_PAGE; i++) {
+        for (int j = 0; j < NUM_COLUMNS; j++) {
+            messageTableWidget->setItem(i, j, new QTableWidgetItem());
+        }
+    }
     tableLayout->addWidget(messageTableWidget);
     
     tableLayout->addLayout(tableButtonLayout);
@@ -95,10 +101,6 @@ SELUserAccountWidget::SELUserAccountWidget(SELController & controller, QWidget *
     connect(messageTableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem *)),
             this, SLOT(emitIdShowData(QTableWidgetItem *)));
             
-    //member = controller.retrieveData();
-    //usernameLineEdit->setText(member->getUsername().c_str());
-    //emailLineEdit->setText(member->getEmail().c_str());
-    //delete member;
 }
 
 SELUserAccountWidget::~SELUserAccountWidget()
@@ -108,21 +110,39 @@ SELUserAccountWidget::~SELUserAccountWidget()
     }
 }
 
-void SELUserAccountWidget::updateMessagesTable(LoanRequest ** requests, unsigned numRequests)
+bool SELUserAccountWidget::checkUserLoansChanged()
+{
+    return userLoansChanged;
+}
+
+void SELUserAccountWidget::setUserLoansChanged(bool changed)
+{
+    userLoansChanged = changed;
+}
+
+void SELUserAccountWidget::updateMessagesTable(LoanRequest * requests, unsigned numRequests)
 {
     unsigned i;
     
     for (i = 0; i < numRequests; i++) {
-        messageTableWidget->item(i, 0)->setText(requests[i]->getStartDate().toString("dd/MM/yyyy"));
-        messageTableWidget->item(i, 1)->setText(requests[i]->getRequestedItem().getOwner().getUsername().c_str());
-        messageTableWidget->item(i, 2)->setText(LoanRequest::getRequestStatusString(requests[i]->getRequestStatus()).c_str());
+        messageTableWidget->item(i, 0)->setText(requests[i].getStartDate().toString("dd/MM/yyyy"));
+        messageTableWidget->item(i, 1)->setText(requests[i].getRequestingMember().getUsername().c_str());
+        messageTableWidget->item(i, 2)->setText(requests[i].getRequestedItem().getTitle().c_str());
+        messageTableWidget->item(i, 3)->setText(LoanRequest::getRequestStatusString(requests[i].getRequestStatus()).c_str());
+        requestIds[i] = requests[i].getRequestId();
     }
-    
+
     while (i < (unsigned)ROWS_PER_PAGE) {
         messageTableWidget->item(i, 0)->setText("");
         messageTableWidget->item(i, 1)->setText("");
         messageTableWidget->item(i, 2)->setText("");
+        messageTableWidget->item(i, 3)->setText("");
+        requestIds[i] = 0;
         i++;
+    }
+
+    if (requests != 0) {
+        delete [] requests;
     }
 }
 
@@ -138,12 +158,41 @@ void SELUserAccountWidget::loadUserData()
     }
 }
 
+void SELUserAccountWidget::loadFirstMessagePage()
+{
+    LoanRequest * requests = 0;
+    int numRequests = 0;
+    
+    requests = controller.retrieveMessagePage(1, numRequests);
+    if (requests != 0) {
+        updateMessagesTable(requests, numRequests);
+    }
+}
+
+void SELUserAccountWidget::reloadMessagePage()
+{
+    LoanRequest * requests = 0;
+    int numRequests = 0;
+    int curPage = currentPageLabel->text().toInt();
+    
+    requests = controller.retrieveMessagePage(curPage, numRequests);
+    if (requests != 0) {
+        updateMessagesTable(requests, (unsigned)numRequests);
+    } else if (numRequests > 0) {
+        Error::raiseError(Error::ERROR_PAGE_RELOAD_FAIL);
+    } else {
+        updateMessagesTable(0, 0);
+    }
+}
+
 /////////////
 // Private //
 /////////////
 
 void SELUserAccountWidget::updatePageIndexNext()
 {
+    LoanRequest * requests = 0;
+    int numRequests = 0;
     int pageToGet;
     bool ok;
     
@@ -151,13 +200,18 @@ void SELUserAccountWidget::updatePageIndexNext()
     
     if (ok) {
         pageToGet++;
-        emit getUserMessagesPage(pageToGet);
-        currentPageLabel->setNum(pageToGet);
+        requests = controller.retrieveMessagePage(pageToGet, numRequests);
+        if ((requests != 0) && (numRequests > 0)) {
+            currentPageLabel->setNum(pageToGet);
+            updateMessagesTable(requests, (unsigned)numRequests);
+        }
     }
 }
 
 void SELUserAccountWidget::updatePageIndexPrevious()
 {
+    LoanRequest * requests = 0;
+    int numRequests = 0;
     int pageToGet;
     bool ok;
     
@@ -166,22 +220,41 @@ void SELUserAccountWidget::updatePageIndexPrevious()
     if (ok) {
         pageToGet--;
         if (pageToGet > 0) {
-            emit getUserMessagesPage(pageToGet);
-            currentPageLabel->setNum(pageToGet);
+            requests = controller.retrieveMessagePage(pageToGet, numRequests);
+            if ((requests != 0) && (numRequests > 0)) {
+                currentPageLabel->setNum(pageToGet);
+                updateMessagesTable(requests, (unsigned)numRequests);
+            }
         }
     }
 }
 
 void SELUserAccountWidget::emitIdShowData(QTableWidgetItem * item)
 {
+    QMessageBox dialog(QMessageBox::NoIcon, "Loan Request", "");
     unsigned long long id = findId(item);
+    unsigned answer;
+    string * message = 0;
     
     if (id > 0) {
-        emit showRequestReplyDialog(id);
+        message = controller.getMessage(id);
+        if (message != 0) {
+            dialog.setText(message->c_str());
+            dialog.setInformativeText("Would you like to loan the item?");
+            dialog.setStandardButtons(QMessageBox::Ok | QMessageBox::No | QMessageBox::Cancel);
+            dialog.setDefaultButton(QMessageBox::No);
+            answer = dialog.exec();
+            sendMessageReply(answer, id);
+            delete message;
+        }
     } else {
         Error::raiseError(Error::ERROR_REQ_ID_NOT_FOUND);
     }
 }
+
+/////////////
+// Private //
+/////////////
 
 unsigned long long SELUserAccountWidget::findId(QTableWidgetItem * item)
 {
@@ -190,7 +263,7 @@ unsigned long long SELUserAccountWidget::findId(QTableWidgetItem * item)
     unsigned long long foundId;
     
     for (i = 0; i < ROWS_PER_PAGE && !found; i++) {
-        for (j = 0; j < NUM_COLUMNS && found; j++) {
+        for (j = 0; j < NUM_COLUMNS && !found; j++) {
             if (item == messageTableWidget->item(i, j)) {
                 row = i;
                 found = true;
@@ -205,5 +278,37 @@ unsigned long long SELUserAccountWidget::findId(QTableWidgetItem * item)
     }
     
     return foundId;
+}
+
+void SELUserAccountWidget::sendMessageReply(unsigned reply, unsigned long long requestId)
+{
+    QMessageBox dialog(QMessageBox::NoIcon, "Loan Request", "Action impossible. Rejecting loan.");
+    LoanRequest * request = controller.retrieveRequest(requestId);
+    bool opSuccess = false;
+    
+    switch (reply) {
+    case QMessageBox::Ok:
+        /// If loan is possible:
+        if (!controller.checkIfLoanPossible(request)) {
+            opSuccess = controller.processRequestReply(requestId, true);
+            userLoansChanged = true;
+        } else {
+            dialog.exec();
+            opSuccess = controller.processRequestReply(requestId, false);
+        }
+        break;
+    case QMessageBox::No:
+        opSuccess = controller.processRequestReply(requestId, false);
+        break;
+    default:
+        break;
+    }
+    if (request != 0) {
+        delete request;
+    }
+    
+    if (opSuccess) {
+        reloadMessagePage();
+    }   
 }
 

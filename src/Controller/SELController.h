@@ -73,6 +73,16 @@ public slots:
     Loan * retrieveLoanPage(int pageToGet, int & numLoans);
     ///
     LoanRequest * retrieveRequestPage(int pageToGet, int & numRequests);
+    ///
+    LoanRequest * retrieveMessagePage(int pageToGet, int & numRequests);
+    ///
+    string * getMessage(unsigned long long requestId);
+    ///
+    LoanRequest * retrieveRequest(unsigned long long requestId);
+    ///
+    bool processRequestReply(unsigned long long requestId, bool accepted);
+    ///
+    bool checkIfLoanPossible(LoanRequest * request);
 };
 
 #endif /// Not SEL_CONTROLLER_H

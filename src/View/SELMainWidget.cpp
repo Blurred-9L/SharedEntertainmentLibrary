@@ -32,6 +32,9 @@ SELMainWidget::SELMainWidget(SELController & controller, QWidget * parent) :
     connect(this, SIGNAL(notifyIdAvailable()),
             userAccountWidget, SLOT(loadUserData()));
     ///
+    connect(this, SIGNAL(notifyIdAvailable()),
+            userAccountWidget, SLOT(loadFirstMessagePage()));
+    ///
     connect(this, SIGNAL(currentChanged(int)),
             this, SLOT(updateIfNecessary(int)));
 }
@@ -55,6 +58,10 @@ void SELMainWidget::updateIfNecessary(int index)
         if (mainLibraryWidget->checkUserRequestsChanged()) {
             userLoansWidget->reloadRequestPage();
             mainLibraryWidget->setUserRequestsChanged(false);
+        }
+        if (userAccountWidget->checkUserLoansChanged()) {
+            userLoansWidget->reloadLoanPage();
+            userAccountWidget->setUserLoansChanged(false);
         }
         break;
     case 3:

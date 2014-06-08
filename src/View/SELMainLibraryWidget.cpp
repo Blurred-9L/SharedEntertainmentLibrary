@@ -379,6 +379,8 @@ void SELMainLibraryWidget::tryToLoanItem(OwnedItem & item)
     int result;
     
     activeLoan = controller.checkIfActiveLoan(item.getOwnedItemId());
+    /// No user should be able to schedule two loans of the same item
+    /// if they have one that is inactive or active currently.
     if (!activeLoan) {
         switch (item.getItemPolicy()) {
         case OwnedItem::POLICY_FREE:
